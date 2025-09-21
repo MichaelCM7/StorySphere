@@ -2,12 +2,12 @@
 require_once __DIR__ . '/Header.php';
 require_once __DIR__ . '/Footer.php';
 require_once __DIR__ . '/Book.php';
-require_once __DIR__ . 'Content.php';
+require_once __DIR__ . '/Content.php';
 
 class Page {
-    private $header;
-    private $footer;
-    private $content;
+    public $header;
+    public $footer;
+    public $content;
 
     public function __construct($books){
         $this->header = new Header();
@@ -15,7 +15,7 @@ class Page {
         $this->content = new Content($books);
     }
 
-    public function showPag(){
+    public function showPage(){
         echo '<!DOCTYPE html>
         <html lang="en">
         <head>
