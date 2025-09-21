@@ -20,6 +20,7 @@ class generalComponents {
                     <div class="card shadow-sm p-4">
                         <?php 
                             $form_components->signInForm();
+                            $form_components->signUpForm();
                         ?>
                     </div>
                 </div>

@@ -39,13 +39,13 @@ class formComponents {
 
             <div class="form-group">
                 <label for="confirm_password">Confirm Password:</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" maxlength="8" required>
+                <input type="password" class="form-control" id="password" name="password" maxlength="8" required>
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
             <a href="signIn.php">Already have an account? Sign in</a>
         </form>
-        
+
     <?php }
 }
 ?>
