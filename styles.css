@@ -96,8 +96,7 @@ header p {
 
 /* Sections as cards */
 main {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: block;
   gap: 1.25rem;
 }
 
