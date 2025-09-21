@@ -1,4 +1,5 @@
 <?php
+
 require '../Components/generalComponents.php';
 require '../Components/formComponents.php';
 
