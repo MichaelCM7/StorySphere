@@ -1,28 +1,27 @@
-<?php
-// Welcome page for Story Sphere (OOP version)
+<?php /// Welcome page for Story Sphere
+
 
 class WelcomePage
 {
-    private string $title = 'Story Sphere';
 
-    public function render(): void
-    {
-        $this->renderHead();
+    private string $title ="StorySphere";
+
+    public function RenderPage():void{
+     $this->Head();
         echo "<body>\n";
         echo "    <div class=\"container\">\n";
-        $this->renderHeader();
+        $this->Header();
         echo "        <main>\n";
-        $this->renderIntro();
-        $this->renderFeatures();
-        $this->renderGetStarted();
+        $this->Intro();
+        $this->Features();
+        $this->GetStarted();
         echo "        </main>\n";
-        $this->renderFooter();
+        $this->Footer();
         echo "    </div>\n";
         echo "</body>\n</html>\n";
     }
 
-    private function renderHead(): void
-    {
+    private function Head():void{
         echo <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -36,9 +35,8 @@ class WelcomePage
 </head>
 HTML;
     }
-
-    private function renderHeader(): void
-    {
+    
+   private function Header():void{
         echo <<<HTML
         <header>
             <h1>Welcome to {$this->title}</h1>
@@ -47,19 +45,17 @@ HTML;
 HTML;
     }
 
-    private function renderIntro(): void
-    {
+    private function Intro():void{
         echo <<<HTML
             <section class="intro">
-                <h2>Discover New Worlds</h2>
-                <p>Explore a vast collection of stories from various genres and authors. Dive into adventures, mysteries, romances, and more.</p>
+                <h2>Discover. Create. Share.</h2>
+                <p>Dive into a world where stories come alive. Explore our vast collection of narratives, create your own tales, and share them with a community of like-minded enthusiasts.</p>
             </section>
 HTML;
     }
 
-    private function renderFeatures(): void
-    {
-        $features = [
+    private function Features():void{
+              $features = [
             'Personalized Recommendations',
             'Offline Reading Mode',
             'Community Reviews and Ratings',
@@ -78,9 +74,8 @@ HTML;
         echo "            </section>\n";
     }
 
-    private function renderGetStarted(): void
-    {
-        echo <<<HTML
+    private function GetStarted():void{
+          echo <<<HTML
             <section class="get-started">
                 <h2>Get Started</h2>
                 <p>Create an account to start your journey with Story Sphere. Enjoy exclusive content and features tailored just for you.</p>
@@ -89,17 +84,16 @@ HTML;
 HTML;
     }
 
-    private function renderFooter(): void
-    {
-        $year = date('Y');
+    private function Footer():void{
+        $year = date("Y");
         echo <<<HTML
         <footer>
-            <p>&copy; {$year} {$this->title}. All rights reserved.</p>
+            <p>&copy; {$year} Story Sphere. All rights reserved.</p>
         </footer>
 HTML;
     }
 }
-
-// Bootstrap the page
-$page = new WelcomePage();
-$page->render();
+$page =new WelcomePage();
+$page->RenderPage();
+   
+?>
