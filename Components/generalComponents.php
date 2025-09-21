@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Submit validation
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
+    document.getElementById('signUpForm').addEventListener('submit', function(e) {
         if(usernameError.textContent || emailError.textContent || passwordError.textContent || confirmError.textContent) {
             e.preventDefault();
         }
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-document.getElementById('signupForm').addEventListener('submit', function(e) {
+document.getElementById('signUpForm').addEventListener('submit', function(e) {
     
         username.dispatchEvent(new Event('input'));
         email.dispatchEvent(new Event('input'));
