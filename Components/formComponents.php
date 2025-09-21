@@ -27,7 +27,7 @@ class formComponents {
 
     public function signUpForm() { 
         ?>
-        <form method="post" action="signup_submit.php">
+        <form method="post" action="../Config/signup_submit.php">
             <h2 class="text-center mb-4">Sign Up</h2>
 
             <div class="form-group">

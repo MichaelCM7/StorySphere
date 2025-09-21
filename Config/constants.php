@@ -1,5 +1,5 @@
 <?php
-  require "/Secure/secureInfo.php";
+  require "../Secure/secureInfo.php";
   
   // Website Timezone
   $config['Timezone'] = 'AFRICA/NAIROBI';
