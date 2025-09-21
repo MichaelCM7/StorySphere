@@ -5,5 +5,5 @@ require '../Components/formComponents.php';
 
 $general_components = new generalComponents();
 $form_components   = new formComponents();
-
+$type='signIn';
 $general_components->formArea($form_components);
