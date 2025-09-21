@@ -5,6 +5,7 @@ require '../Components/formComponents.php';
 $general_components = new generalComponents();
 $form_components   = new formComponents();
 $type='signUp';
+// $form_components->signUpForm();
 
 $general_components->formArea($form_components);
 ?>
