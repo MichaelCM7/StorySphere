@@ -21,8 +21,10 @@ class generalComponents {
                        <?php 
                         if (basename($_SERVER['PHP_SELF']) == 'signIn.php') {
                             $form_components->signInForm();
-                        } else {
+                        } else if(basename($_SERVER['PHP_SELF']) == 'signUp.php') {
                             $form_components->signUpForm();
+                        } else {
+                            $form_components->mailVerifyForm();
                         }
                         ?>
                     </div>

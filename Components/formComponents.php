@@ -74,4 +74,19 @@ class formComponents {
         </form>
         <?php 
     }
+
+    public function mailVerifyForm(){
+        ?>
+            <h2 class="text-center mb-4">Verify Email</h2>
+
+            <div class="form-group">
+                <label for="otp">Enter The OTP Sent To Your Email</label>
+                <input type="text" class="form-control" id="otp" name="otp" minlength="6" maxlength="6" required>
+                <small class="text-danger" id="otpError"></small>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Verify</button>
+            </form>
+        <?php
+    }
 }
