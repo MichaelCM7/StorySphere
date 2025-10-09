@@ -8,6 +8,7 @@
 </head>
 <body>
   <?php
+  require 'dbconnection.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
 
   echo "<pre>";
@@ -21,6 +22,11 @@
     exit(); 
   }
   $password = $_POST["password"];
+  $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+  //Insert data into database
+  $sql = "INSERT INTO USERS () VALUES (,col2); ";
+  mysqli_query($connection,$sql)
 
   require 'client.php';
   require 'mail.php';

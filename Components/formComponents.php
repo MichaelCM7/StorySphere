@@ -3,16 +3,16 @@ class formComponents {
 
     public function signInForm() {
         ?>
-        <form method="post" action="login_submit.php">
+        <form method="post" action="signin_submit.php">
             <h2 class="text-center mb-4">Sign In</h2>
 
             <div class="form-group">
-                <label for="email">Email Address:</label>
+                <label for="email">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" maxlength="50" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
 
@@ -31,25 +31,37 @@ class formComponents {
             <h2 class="text-center mb-4">Sign Up</h2>
 
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" maxlength="30" required>
-                <small class="text-danger" id="usernameError"></small>
+                <label for="firstname">First Name</label>
+                <input type="text" class="form-control" id="firstname" name="firstname" maxlength="30" required>
+                <small class="text-danger" id="firstnameError"></small>
             </div>
 
             <div class="form-group">
-                <label for="email">Email Address:</label>
+                <label for="Last Name">Last Name</label>
+                <input type="text" class="form-control" id="lastname" name="lastname" maxlength="30" required>
+                <small class="text-danger" id="lastnameError"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="phonenumber">Phone Number</label>
+                <input type="text" class="form-control" id="phonenumber" name="phonenumber" minlength="10" maxlength="10" required>
+                <small class="text-danger" id="phonenumberError"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" maxlength="50" required>
                 <small class="text-danger" id="emailError"></small>
             </div>
 
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" maxlength="8" required>
                 <small class="text-danger" id="passwordError"></small>
             </div>
 
             <div class="form-group">
-                <label for="confirm_password">Confirm Password:</label>
+                <label for="confirm_password">Confirm Password</label>
                 <input type="password" class="form-control" id="Cpassword" name="Cpassword" maxlength="8" required>
                 <small class="text-danger" id="CpasswordError"></small>
             </div>
