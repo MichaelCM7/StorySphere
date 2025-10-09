@@ -1,1 +1,44 @@
-/* Css goes here */
+/* sidebar.css styling */
+.sidebar {
+  background: #1e293b;
+  color: white;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+}
+
+.sidebar h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.sidebar p {
+  color: #94a3b8;
+  margin-top: 0.2rem;
+  font-size: 0.9rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+}
+
+.sidebar a {
+  display: block;
+  color: #cbd5e1;
+  text-decoration: none;
+  margin: 0.8rem 0;
+  padding: 0.5rem 0;
+}
+
+.sidebar a:hover {
+  color: white;
+}
+
+.logout a {
+  color: #fca5a5;
+  text-decoration: none;
+}
