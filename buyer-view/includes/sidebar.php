@@ -8,7 +8,7 @@
 
 <div class="sidebar">
     <div class="logo">
-        <h2>📘 LibraryHub</h2>
+        <h2>📘 StorySphere</h2>
         <p>Book Management</p>
   </div>
 

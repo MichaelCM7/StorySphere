@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Profile | LibraryHub</title>
+  <title>Profile | StorySphere</title>
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>

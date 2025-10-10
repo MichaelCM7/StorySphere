@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard | LibraryHub</title>
+  <title>Dashboard | StorySphere</title>
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
