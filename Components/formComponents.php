@@ -16,6 +16,10 @@ class formComponents {
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
 
+            <p>
+                <a href="mailVerify.php">Forgot Password?</a>
+             </p>
+
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
 
             <p class="text-center mt-3">

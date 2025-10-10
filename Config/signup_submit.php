@@ -26,7 +26,7 @@
 
   //Insert data into database
   $sql = "INSERT INTO USERS () VALUES (,col2); ";
-  mysqli_query($connection,$sql)
+  mysqli_query($connection,$sql);
 
   require 'client.php';
   require 'mail.php';
