@@ -16,6 +16,7 @@
         If you did not register for this website you can ignore this message.<br>
         Enter the following code to complete the registration process.<br><br>
         <h1>".$otp."</h1>
+        <p>This code is valid for 2 minutes.</p>
         <br><br>
 
         Regards,<br>

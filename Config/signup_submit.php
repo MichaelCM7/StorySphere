@@ -8,15 +8,25 @@
 </head>
 <body>
   <?php
+  session_start();
+  require_once __DIR__ . '/../Utils/otp.php';
   require 'dbconnection.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
+  require 'client.php';
+  require 'mail.php';
 
   echo "<pre>";
   print_r($_POST);
   echo "</pre>";
 
-  $username = $_POST["username"];
-  $email = $_POST["email"];
+ // Collect form data
+$firstname   = $_POST["firstname"];
+$lastname    = $_POST["lastname"];
+$phonenumber = $_POST["phonenumber"];
+$email       = $_POST["email"];
+$password    = $_POST["password"];
+$cpassword   = $_POST["Cpassword"];
+
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo "Error: The email address is not valid.";
     exit(); 
@@ -27,18 +37,18 @@
   //Insert data into database
   $sql = "INSERT INTO USERS () VALUES (,col2); ";
   mysqli_query($connection,$sql);
-  //$sql = "INSERT INTO USERS () VALUES (,col2); ";
-  //mysqli_query($connection,$sql)
-
-  require 'client.php';
-  require 'mail.php';
-
+  
+  // Generate OTP
+  $otp = otpGenerator();
+  storeOtp($otp);
+  
   // Send the email
   $Mail = new Mail();
   $result = $Mail->sendMail($config, $client);
 
   if($result){
     echo "Signup successful. Please check your email for verification.";
+    header("location: ../Pages/mailVerify.php");
     return true;
   } else {
     echo "Sign Up Failed";
