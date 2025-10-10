@@ -85,6 +85,10 @@ class formComponents {
                 <small class="text-danger" id="otpError"></small>
             </div>
 
+            <p class="text-center mt-3">
+                <a href="">Resend The Code</a>
+            </p>
+
             <button type="submit" class="btn btn-primary btn-block">Verify</button>
             </form>
         <?php

@@ -1,6 +1,8 @@
 <?php
   require 'constants.php';
+  require '../Utils/otp.php';
 
+  $otp = otpGenerator();
 
   $client = [
     'Name_From' => $config['Website_Name'],
@@ -12,7 +14,10 @@
         Hello $firstname $lastname,<br><br>
         You requested to create an account on {$config['Website_Name']}.<br>
         If you did not register for this website you can ignore this message.<br>
-        In order to use this account you need to <a href='{$config['Website_URL']}index.php'>Click Here</a> to complete the registration process.<br><br>
+        Enter the following code to complete the registration process.<br><br>
+        <h1>".$otp."</h1>
+        <br><br>
+
         Regards,<br>
         Support Team.<br>
         {$config['Website_Name']}.

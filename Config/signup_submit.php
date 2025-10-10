@@ -11,11 +11,13 @@
   require 'dbconnection.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
 
-  echo "<pre>";
-  print_r($_POST);
-  echo "</pre>";
+  // echo "<pre>";
+  // print_r($_POST);
+  // echo "</pre>";
 
-  $username = $_POST["username"];
+  $firstname = $_POST["firstname"];
+  $lastname = $_POST["lastname"];
+  $phone = $_POST["phonenumber"];
   $email = $_POST["email"];
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo "Error: The email address is not valid.";
@@ -25,8 +27,8 @@
   $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
   //Insert data into database
-  $sql = "INSERT INTO USERS () VALUES (,col2); ";
-  mysqli_query($connection,$sql)
+  //$sql = "INSERT INTO USERS () VALUES (,col2); ";
+  //mysqli_query($connection,$sql)
 
   require 'client.php';
   require 'mail.php';
@@ -37,10 +39,14 @@
 
   if($result){
     echo "Signup successful. Please check your email for verification.";
-    return true;
+    header("Location: ../Pages/mailVerify.php");
+    exit();
+    // return true;
   } else {
     echo "Sign Up Failed";
-    return false;
+    header("Location: ../Pages/error.php");
+    exit();
+    // return false;
   }
 
   
