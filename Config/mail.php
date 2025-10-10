@@ -16,7 +16,7 @@ class Mail{
   try {
       //Server settings
       $mail->isSMTP();
-      $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+      $mail->SMTPDebug = SMTP::DEBUG_OFF;
       $mail->Host       = $config['SMTP_Host'];
       $mail->SMTPAuth   = true;
       $mail->Username   = $config['SMTP_User'];
@@ -43,7 +43,7 @@ class Mail{
       // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
       $mail->send();
-      echo 'Message has been sent';
+      echo 'Message has been sent<br>';
       return true;
   } catch (Exception $e) {
       echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";

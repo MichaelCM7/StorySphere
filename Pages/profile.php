@@ -30,6 +30,10 @@ $template->hero('Profile');
                     <input type="text" class="form-control" value="Doe">
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" minlength="10" maxlength="10">
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-control" value="info@storysphere.com">
                 </div>

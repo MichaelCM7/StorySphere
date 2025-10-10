@@ -19,9 +19,9 @@ class generalComponents {
                 <div class="col-md-6">
                     <div class="card shadow-sm p-4">
                        <?php 
-                        if (basename($_SERVER['PHP_SELF']) == 'signIn.php') {
+                        if (basename($_SERVER['PHP_SELF']) == 'signIn.php' || basename($_SERVER['PHP_SELF']) == 'SignIn.php') {
                             $form_components->signInForm();
-                        } else if(basename($_SERVER['PHP_SELF']) == 'signUp.php') {
+                        } else if(basename($_SERVER['PHP_SELF']) == 'signUp.php' || basename($_SERVER['PHP_SELF']) == 'SignUp.php') {
                             $form_components->signUpForm();
                         } else {
                             $form_components->mailVerifyForm();
