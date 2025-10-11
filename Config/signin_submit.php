@@ -8,7 +8,6 @@
 </head>
 <body>
   <?php
-  session_start();
   require_once __DIR__ . '/../Utils/otp.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
   require 'dbconnection.php';
@@ -40,16 +39,17 @@
       exit(); 
   }
   // Generate OTP
-  $otp = otpGenerator();
-  storeOtp($otp);
+  $otp=otpGenerator();
   
+
   // Send the email
   $Mail = new Mail();
-  $result = $Mail->sendMail($config, $client);
+  $result = $Mail->sendMail($config, $client,$otp);
 
   if($result){
     echo "Sign In successful. Please check your email for verification.";
     header("location: ../Pages/mailVerify.php");
+    exit;
     return true;
   } else {
     echo "Sign In Failed";

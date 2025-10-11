@@ -97,4 +97,22 @@ class formComponents {
             </form>
         <?php
     }
+    public function forgotPasswordForm() {
+    ?>
+        <h2 class="text-center mb-4">Forgot Password</h2>
+
+        <div class="form-group">
+            <label for="email">Enter Your Registered Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <small class="text-danger" id="emailError"></small>
+        </div>
+
+        <p class="text-center mt-3">
+            <a href="login.php">Back to Login</a>
+        </p>
+
+        <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+    <?php
+}
+
 }
