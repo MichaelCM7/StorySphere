@@ -8,6 +8,7 @@
 </head>
 <body>
   <?php
+  require_once __DIR__ . '/../Utils/verifyOtp.php';
   require 'dbconnection.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
   require_once 'otpcall.php';
@@ -16,10 +17,14 @@
   // print_r($_POST);
   // echo "</pre>";
 
-  $firstname = $_POST["firstname"];
-  $lastname = $_POST["lastname"];
-  $phone = $_POST["phonenumber"];
-  $email = $_POST["email"];
+ // Collect form data
+$firstname   = $_POST["firstname"];
+$lastname    = $_POST["lastname"];
+$phonenumber = $_POST["phonenumber"];
+$email       = $_POST["email"];
+$password    = $_POST["password"];
+$cpassword   = $_POST["Cpassword"];
+
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo "Error: The email address is not valid.";
     exit(); 
@@ -28,26 +33,34 @@
   $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
   //Insert data into database
-  //$sql = "INSERT INTO USERS () VALUES (,col2); ";
-  //mysqli_query($connection,$sql)
-
-  require 'client.php';
-  require 'mail.php';
-
+  // Prepare the SQL statement
+$stmt = $connection->prepare("
+    INSERT INTO USERS (firstname, lastname, phonenumber, email, password)
+    VALUES (?, ?, ?, ?, ?)
+");
+$stmt->bind_param("sssss", $firstname, $lastname, $phonenumber, $email, $hashed_password);
+if ($stmt->execute()) {
+    echo "Data inserted successfully!";
+} else {
+    echo "Error inserting data: " . $stmt->error;
+}
+$stmt->close();
+  
+  // Generate OTP
+  $otp=otpGenerator();
+  
   // Send the email
   $Mail = new Mail();
-  $result = $Mail->sendMail($config, $client);
+  $result = $Mail->sendMail($config, $client,$otp);
 
   if($result){
     echo "Signup successful. Please check your email for verification.";
-    header("Location: ../Pages/mailVerify.php");
-    exit();
-    // return true;
+    header("location: ../Pages/mailVerify.php");
+    exit;
+    return true;
   } else {
     echo "Sign Up Failed";
-    header("Location: ../Pages/error.php");
-    exit();
-    // return false;
+    return false;
   }
 
   // Debug

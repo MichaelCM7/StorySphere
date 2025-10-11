@@ -8,7 +8,12 @@
 </head>
 <body>
   <?php
+  require_once __DIR__ . '/../Utils/otp.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
+  require 'dbconnection.php';
+  require 'client.php';
+  require 'mail.php';
+
 
   echo "<pre>";
   print_r($_POST);
@@ -23,7 +28,35 @@
   $prepStatement->execute();
   $result = $prepStatement->get_result();
 
+  if ($result->num_rows === 0) {
+      echo "Error: No user found with this email.";
+      exit(); 
+  }
+  $row = $result->fetch_assoc();
+  $hashed_password = $row['password'];
+  if (!password_verify($password, $hashed_password)) {
+      echo "Error: Incorrect password.";
+      exit(); 
+  }
+  // Generate OTP
+  $otp=otpGenerator();
   
+
+  // Send the email
+  $Mail = new Mail();
+  $result = $Mail->sendMail($config, $client,$otp);
+
+  if($result){
+    echo "Sign In successful. Please check your email for verification.";
+    header("location: ../Pages/mailVerify.php");
+    exit;
+    return true;
+  } else {
+    echo "Sign In Failed";
+    return false;
+  }
+
+
 ?>
 </body>
 </html>

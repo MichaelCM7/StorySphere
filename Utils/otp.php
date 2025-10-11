@@ -29,4 +29,4 @@
     $randomNumber = $randomNum1.$randomNum2.$randomNum3.$randomNum4.$randomNum5.$randomNum6;
     return $randomNumber;
   };
-?>
+
