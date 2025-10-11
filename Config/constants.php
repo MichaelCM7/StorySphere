@@ -17,7 +17,7 @@
   $config['DB_Host'] = 'localhost';
   $config['DB_User'] = $dbUser;
   $config['DB_Password'] = $dbPassword;
-  $config['DB_Name'] = '';
+  $config['DB_Name'] = $dbName;
   $config['DB_Port'] = $dbPort;
 
   //  Email Protocol Configiguration

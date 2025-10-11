@@ -10,6 +10,7 @@
   <?php
   require 'dbconnection.php';
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
+  require_once 'otpcall.php';
 
   // echo "<pre>";
   // print_r($_POST);
@@ -49,7 +50,8 @@
     // return false;
   }
 
-  
+  // Debug
+  // echo "OTP set in session: " . $_SESSION['otp'];
 ?>
 </body>
 </html>

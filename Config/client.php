@@ -1,8 +1,7 @@
 <?php
   require 'constants.php';
-  require '../Utils/otp.php';
-
-  $otp = otpGenerator();
+  //include '../Config/signup_submit.php';
+  //require_once 'otpcall.php';
 
   $client = [
     'Name_From' => $config['Website_Name'],
@@ -15,7 +14,7 @@
         You requested to create an account on {$config['Website_Name']}.<br>
         If you did not register for this website you can ignore this message.<br>
         Enter the following code to complete the registration process.<br><br>
-        <h1>".$otp."</h1>
+        <h1>".$_SESSION['otp']."</h1>
         <br><br>
 
         Regards,<br>

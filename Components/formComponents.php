@@ -3,7 +3,7 @@ class formComponents {
 
     public function signInForm() {
         ?>
-        <form method="post" action="signin_submit.php">
+        <form method="post" action="../Config/signin_submit.php">
             <h2 class="text-center mb-4">Sign In</h2>
 
             <div class="form-group">
@@ -77,19 +77,22 @@ class formComponents {
 
     public function mailVerifyForm(){
         ?>
-            <h2 class="text-center mb-4">Verify Email</h2>
+            <form action="../Config/mailverify_submit.php" method="post">
+                <h2 class="text-center mb-4">Verify Email</h2>
 
-            <div class="form-group">
-                <label for="otp">Enter The OTP Sent To Your Email</label>
-                <input type="text" class="form-control" id="otp" name="otp" minlength="6" maxlength="6" required>
-                <small class="text-danger" id="otpError"></small>
-            </div>
+                <div class="form-group">
+                    <label for="otp">Enter The OTP Sent To Your Email</label>
+                    <input type="text" class="form-control" id="otp" name="otp" minlength="6" maxlength="6" required>
+                    <small class="text-danger" id="otpError"></small>
+                </div>
 
-            <p class="text-center mt-3">
-                <a href="">Resend The Code</a>
-            </p>
+                <h4 class="text-center mb-4"></h4>
 
-            <button type="submit" class="btn btn-primary btn-block">Verify</button>
+                <p class="text-center mt-3">
+                    <a href="">Resend The Code</a>
+                </p>
+
+                <button type="submit" class="btn btn-primary btn-block">Verify</button>
             </form>
         <?php
     }
