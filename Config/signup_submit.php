@@ -33,34 +33,38 @@ $cpassword   = $_POST["Cpassword"];
   $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
   //Insert data into database
-  // Prepare the SQL statement
-$stmt = $connection->prepare("
-    INSERT INTO USERS (firstname, lastname, phonenumber, email, password)
-    VALUES (?, ?, ?, ?, ?)
-");
-$stmt->bind_param("sssss", $firstname, $lastname, $phonenumber, $email, $hashed_password);
-if ($stmt->execute()) {
-    echo "Data inserted successfully!";
-} else {
-    echo "Error inserting data: " . $stmt->error;
-}
-$stmt->close();
+  // $stmt = $connection->prepare("
+  //     INSERT INTO USERS (firstname, lastname, phonenumber, email, password)
+  //     VALUES (?, ?, ?, ?, ?)
+  // ");
+  // $stmt->bind_param("sssss", $firstname, $lastname, $phonenumber, $email, $hashed_password);
+  // if ($stmt->execute()) {
+  //     echo "Data inserted successfully!";
+  // } else {
+  //     echo "Error inserting data: " . $stmt->error;
+  // }
+  // $stmt->close();
+
+  require 'client.php';
+  require 'mail.php';
+
   
   // Generate OTP
-  $otp=otpGenerator();
+  // $otp=otpGenerator();
   
   // Send the email
   $Mail = new Mail();
-  $result = $Mail->sendMail($config, $client,$otp);
+  $result = $Mail->sendMail($config, $client);
+  // $result = $Mail->sendMail($config, $client,$otp);
 
   if($result){
     echo "Signup successful. Please check your email for verification.";
-    header("location: ../Pages/mailVerify.php");
+    header("Location: ../Pages/mailVerify.php");
     exit;
-    return true;
   } else {
     echo "Sign Up Failed";
-    return false;
+    header("Location: ../Pages/error.php");
+    exit();
   }
 
   // Debug
