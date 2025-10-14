@@ -1,4 +1,4 @@
 /Secure/
 /ExternalLibraries/PHPMailer/
-/database/
+# /database/
 /Pages/test.php

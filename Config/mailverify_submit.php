@@ -2,7 +2,7 @@
 session_start();
 
 $enteredCode = $_POST['otp'];
-$timeout = 300; // 5 minutes
+$timeout = 180; // 3 minutes
 
 if (isset($_SESSION['otp'], $_SESSION['otp_created']) &&
     (time() - $_SESSION['otp_created'] <= $timeout)) {
