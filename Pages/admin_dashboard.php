@@ -57,13 +57,13 @@ $template->hero('Dashboard');
 
 <div class="row mt-3">
     <div class="col-md-4 mb-2">
-        <a href="manage_books.php" class="btn btn-dark btn-modern w-100">Manage Books</a>
+        <a href="admin_manage_books.php" class="btn btn-dark btn-modern w-100">Manage Books</a>
     </div>
     <div class="col-md-4 mb-2">
-        <a href="reports.php" class="btn btn-dark btn-modern w-100">Generate Reports</a>
+        <a href="admin_reports.php" class="btn btn-dark btn-modern w-100">Generate Reports</a>
     </div>
     <div class="col-md-4 mb-2">
-        <a href="profile.php" class="btn btn-dark btn-modern w-100">Profile</a>
+        <a href="admin_profile.php" class="btn btn-dark btn-modern w-100">Profile</a>
     </div>
 </div>
 
