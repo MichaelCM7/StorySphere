@@ -13,10 +13,10 @@
       <?php include 'includes/header.php'; ?>
 
       <div class="stats">
-        <div class="card">📘<h2><?= $user['borrowed_books'] ?></h2><p>Borrowed Books</p></div>
-        <div class="card">⏰<h2><?= $user['pending_returns'] ?></h2><p>Pending Returns</p></div>
-        <div class="card">💲<h2>$<?= $user['fines'] ?></h2><p>Outstanding Fines</p></div>
-        <div class="card">📈<h2><?= $user['books_read'] ?></h2><p>Books Read</p></div>
+        <div class="card"><h2><?= $user['borrowed_books'] ?></h2><p>Borrowed Books</p></div>
+        <div class="card"><h2><?= $user['pending_returns'] ?></h2><p>Pending Returns</p></div>
+        <div class="card"><h2>$<?= $user['fines'] ?></h2><p>Outstanding Fines</p></div>
+        <div class="card"><h2><?= $user['books_read'] ?></h2><p>Books Read</p></div>
       </div>
 
       <section class="activity">
