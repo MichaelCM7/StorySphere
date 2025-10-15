@@ -17,8 +17,4 @@ if (isset($_SESSION['otp'], $_SESSION['otp_created']) &&
     echo "OTP expired. Please request a new one.";
     unset($_SESSION['otp'], $_SESSION['otp_created']);
 }
-
-// Debug
-// echo "Session OTP: " . $_SESSION['otp'] . "<br>";
-// echo "Entered OTP: " . $_POST['otp'] . "<br>";
 ?>

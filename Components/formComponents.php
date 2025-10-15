@@ -93,7 +93,7 @@ class formComponents {
                 <h4 class="text-center mb-4"></h4>
 
                 <p class="text-center mt-3">
-                    <a href="">Resend The Code</a>
+                    <a href="../Config/resendotp.php">Resend The Code</a>
                 </p>
 
                 <button type="submit" class="btn btn-primary btn-block">Verify</button>
