@@ -465,9 +465,6 @@ class FineManagement implements SectionInterface
     }
 }
 
-// ============================================
-// MAIN DASHBOARD CLASS
-// ============================================
 
 class LibraryDashboard
 {
