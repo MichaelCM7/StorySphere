@@ -79,14 +79,18 @@ $template->hero('Manage Books');
     
     <style>
         /* General Styles - No CSS Framework */
+        html{
+            padding: 0;
+            margin: 0;
+        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7f9;
-            padding: 20px;
+            padding: 0px;
         }
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
         }
         .card {
             background-color: #ffffff;
