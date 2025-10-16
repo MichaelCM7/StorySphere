@@ -539,6 +539,9 @@ class LibrarianTemplate
                         </li>
                         <li class="nav-item"><a class="nav-link text-white" href="librarian_reservations.php">Reservations</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="librarian_fines_manage.php">Fines</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="librarian_reports.php">Reports</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="librarian_profile.php">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>

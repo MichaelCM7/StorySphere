@@ -1,16 +1,5 @@
 <?php
-  $securePath = __DIR__ . '/../Secure/secureInfo.php';
-  if (file_exists($securePath)) {
-      require $securePath;
-  } else {
-      // Fallback if secure info is missing - set via env or placeholders
-      $dbUser = getenv('STORYSPHERE_DB_USER') ?: 'root';
-      $dbPassword = getenv('STORYSPHERE_DB_PASS') ?: '';
-      $dbName = getenv('STORYSPHERE_DB_NAME') ?: 'storysphere';
-      $dbPort = (int)(getenv('STORYSPHERE_DB_PORT') ?: 3306);
-      $personalEmail = getenv('STORYSPHERE_SMTP_USER') ?: 'noreply@storysphere.local';
-      $appPassword = getenv('STORYSPHERE_SMTP_PASS') ?: '';
-  }
+  require "../Secure/secureInfo.php";
   
   // Website Timezone
   $config['Timezone'] = 'AFRICA/NAIROBI';
