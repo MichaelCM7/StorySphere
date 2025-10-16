@@ -165,8 +165,8 @@ class BookInventorySection extends DbBackedSection
             </table>
         </div>
         <div class="text-end mt-3">
-            <a href="librarian_books_list.php" class="btn btn-dark btn-modern">View All Books</a>
-            <a href="librarian_book_create.php" class="btn btn-success btn-modern">Add New Book</a>
+            <a href="librarian_books_crud.php" class="btn btn-dark btn-modern">View All Books</a>
+            <a href="librarian_books_crud.php?action=create" class="btn btn-success btn-modern">Add New Book</a>
         </div>
         <?php
         return ob_get_clean();
@@ -525,9 +525,8 @@ class LibrarianTemplate
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="booksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Books</a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="booksDropdown">
-                                <li><a class="dropdown-item" href="librarian_books_list.php">Books List</a></li>
-                                <li><a class="dropdown-item" href="librarian_book_create.php">Add Book</a></li>
-                                <li><a class="dropdown-item" href="librarian_manage_books.php">Manage Books</a></li>
+                                <li><a class="dropdown-item" href="librarian_books_crud.php">Books List</a></li>
+                                                                <li><a class="dropdown-item" href="librarian_books_crud.php">Manage Books</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
