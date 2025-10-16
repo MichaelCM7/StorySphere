@@ -54,67 +54,75 @@ $template->hero('Dashboard');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Dashboard</title>
+    <style>
+        body{
+            padding-top: 0;
+        }
+    </style>
 </head>
 <body>
-    <div class="row">
-        <div class="col-md-3 mb-4">
-            <div class="card card-modern bg-light text-dark">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6>Total Books</h6>
-                        <h3 id="totalBooks"><?php echo $total_books; ?></h3>
+    <main>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card card-modern bg-light text-dark">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6>Total Books</h6>
+                            <h3 id="totalBooks"><?php echo $total_books; ?></h3>
+                        </div>
+                        <i class="bi bi-book" style="font-size:2rem;"></i>
                     </div>
-                    <i class="bi bi-book" style="font-size:2rem;"></i>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card card-modern bg-light text-dark">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6>Books Borrowed</h6>
+                            <h3 id="borrowedBooks"><?php echo $borrowed_books; ?></h3>
+                        </div>
+                        <i class="bi bi-journal-check" style="font-size:2rem;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card card-modern bg-light text-dark">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6>Total Users</h6>
+                            <h3 id="totalUsers"><?php echo $total_users; ?></h3>
+                        </div>
+                        <i class="bi bi-people" style="font-size:2rem;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card card-modern bg-light text-dark">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6>Total Penalty Income</h6>
+                            <h3 id="totalPenalty">KES <?php echo $total_penalty_kes; ?></h3>
+                        </div>
+                        <i class="bi bi-cash-stack" style="font-size:2rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4">
-            <div class="card card-modern bg-light text-dark">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6>Books Borrowed</h6>
-                        <h3 id="borrowedBooks"><?php echo $borrowed_books; ?></h3>
-                    </div>
-                    <i class="bi bi-journal-check" style="font-size:2rem;"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card card-modern bg-light text-dark">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6>Total Users</h6>
-                        <h3 id="totalUsers"><?php echo $total_users; ?></h3>
-                    </div>
-                    <i class="bi bi-people" style="font-size:2rem;"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-4">
-            <div class="card card-modern bg-light text-dark">
-                <div class="card-body d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6>Total Penalty Income</h6>
-                        <h3 id="totalPenalty">KES <?php echo $total_penalty_kes; ?></h3>
-                    </div>
-                    <i class="bi bi-cash-stack" style="font-size:2rem;"></i>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col-md-4 mb-2">
-            <a href="admin_manage_books.php" class="btn btn-dark btn-modern w-100">Manage Books</a>
+        <div class="row mt-3">
+            <div class="col-md-4 mb-2">
+                <a href="admin_manage_books.php" class="btn btn-dark btn-modern w-100">Manage Books</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a href="admin_reports.php" class="btn btn-dark btn-modern w-100">Generate Reports</a>
+            </div>
+            <div class="col-md-4 mb-2">
+                <a href="admin_profile.php" class="btn btn-dark btn-modern w-100">Profile</a>
+            </div>
         </div>
-        <div class="col-md-4 mb-2">
-            <a href="admin_reports.php" class="btn btn-dark btn-modern w-100">Generate Reports</a>
-        </div>
-        <div class="col-md-4 mb-2">
-            <a href="admin_profile.php" class="btn btn-dark btn-modern w-100">Profile</a>
-        </div>
-    </div>
+    </main>
+
 </body>
 </html>
 
