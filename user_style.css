@@ -15,21 +15,24 @@ body {
 main {
   flex: 1;
   padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* ---------- Sidebar ---------- */
+/* ---------- Navbar ---------- */
 .navbar {
-  background: #0b2e91;
-  color: white;
+  background: #007bff; /* lighter, modern blue */
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 2rem;
+  padding: 0.9rem 2rem;
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000; /* Keep navbar above page content */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.15);
 }
 
 /* LOGO SECTION */
@@ -51,20 +54,22 @@ main {
 .navbar .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 1.25rem;
   margin: 0;
   padding: 0;
 }
 
 .navbar .nav-links a {
-  color: #cbd5e1;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-size: 0.95rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   position: relative;
-  transition: color 0.3s ease;
+  padding: 0.4rem 0.3rem;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 /* Hover underline animation */
@@ -75,12 +80,13 @@ main {
   left: 0;
   height: 2px;
   width: 0;
-  background-color: white;
-  transition: width 0.3s ease;
+  background-color: #ffffff;
+  transition: width 0.2s ease;
 }
 
 .navbar .nav-links a:hover {
-  color: white;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar .nav-links a:hover::after {
@@ -89,16 +95,19 @@ main {
 
 /* LOGOUT BUTTON */
 .navbar .logout a {
-  color: #fca5a5;
+  color: #fee2e2;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
 }
 
 .navbar .logout a:hover {
-  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* ---------- Header ---------- */
@@ -115,17 +124,24 @@ main {
 /* ---------- Dashboard ---------- */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
   margin-top: 1.5rem;
 }
 
 .card {
-  background: white;
+  background: #ffffff;
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(2, 6, 23, 0.06);
   text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.08);
 }
 
 .card h2 {
@@ -133,9 +149,10 @@ main {
 }
 
 .activity {
-  background: white;
+  background: #ffffff;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   margin-top: 2rem;
 }
 
@@ -153,10 +170,18 @@ main {
 /* ---------- Browse Books ---------- */
 .search {
   width: 100%;
-  padding: 0.8rem;
+  padding: 0.8rem 1rem;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 10px;
   margin: 1rem 0 2rem;
+  background: #ffffff;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.search:focus {
+  outline: none;
+  border-color: #93c5fd; /* blue-300 */
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.35);
 }
 
 .book-grid {
@@ -166,16 +191,25 @@ main {
 }
 
 .book-card {
-  background: white;
+  background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
   text-align: center;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(2, 6, 23, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.08);
 }
 
 .book-card img {
   width: 100%;
+  height: 180px;
+  object-fit: cover;
   border-radius: 8px;
 }
 
@@ -187,7 +221,7 @@ main {
   margin-top: 0.5rem;
 }
 
-.status.available { background: #e0f2fe; color: #0369a1; }
+.status.available { background: #dbeafe; color: #1d4ed8; }
 .status.borrowed { background: #fee2e2; color: #b91c1c; }
 
 /* ---------- Borrowed Books ---------- */
@@ -196,19 +230,23 @@ main {
 }
 
 .borrow-item {
-  background: white;
+  background: #ffffff;
   margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .badge {
   padding: 0.4rem 0.7rem;
   border-radius: 6px;
   font-size: 0.8rem;
+  border: 1px solid #e5e7eb;
+  font-weight: 600;
 }
 
 .badge.active { background: #e2e8f0; }
@@ -217,15 +255,20 @@ main {
 
 button {
   background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 10px;
   padding: 0.6rem 1rem;
   cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
 }
 
 button:hover {
   background: #1d4ed8;
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 /* ---------- Fines Page ---------- */
@@ -238,9 +281,10 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
+  background: #ffffff;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   margin-bottom: 1.5rem;
 }
 
@@ -258,8 +302,9 @@ button:hover {
 }
 
 .fine-list {
-  background: white;
-  border-radius: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   padding: 1rem 1.5rem;
 }
 
@@ -267,7 +312,7 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 0;
+  padding: 0.9rem 0;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -289,10 +334,11 @@ button:hover {
 }
 
 .profile-form {
-  background: white;
+  background: #ffffff;
   padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(2, 6, 23, 0.06);
   display: flex;
   flex-direction: column;
 }
@@ -309,10 +355,17 @@ button:hover {
 }
 
 .profile-form input {
-  padding: 0.7rem;
+  padding: 0.7rem 0.9rem;
   margin-top: 0.4rem;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 10px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-form input:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.35);
 }
 
 .save-btn {
