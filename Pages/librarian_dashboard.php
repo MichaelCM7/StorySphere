@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../Config/constants.php';
-require_once __DIR__ . '/../Components/Librarian/LibraryComponents.php';
+require_once __DIR__ . '/../Components/LibraryComponents.php';
 
 // Session check placeholder (align with your existing auth if needed)
 // session_start();

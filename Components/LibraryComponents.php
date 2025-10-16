@@ -30,8 +30,8 @@ abstract class DbBackedSection implements SectionInterface
         if ($this->db instanceof \mysqli) {
             return $this->db;
         }
-        // Lazily include the project's mysqli connection
-        require __DIR__ . '/../../Config/dbconnection.php'; // defines $connection
+        
+        require __DIR__ . '/../Config/dbconnection.php'; // defines $connection
         $this->db = $connection; // from included file
         return $this->db;
     }
@@ -599,4 +599,3 @@ class LibrarianTemplate
         <?php
     }
 }
-
