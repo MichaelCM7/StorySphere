@@ -1,4 +1,4 @@
--- storysphere_db Migration File (Schema with Status FK - Final)
+-- storysphere_db Migration File (Schema with Status FK - Soft Delete)
 -- Generation Time: Oct 11, 2025
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -24,11 +24,12 @@ USE `storysphere`;
 --
 CREATE TABLE `book_statuses` (
   `book_status_id` int NOT NULL,
-  `status_name` varchar(50) NOT NULL
+  `status_name` varchar(50) NOT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Stored Procedures (Modified to use Status IDs)
+-- Stored Procedures (No change needed)
 --
 DELIMITER $$
 
@@ -101,7 +102,8 @@ DELIMITER ;
 --
 CREATE TABLE `roles` (
   `role_id` int NOT NULL,
-  `role_name` varchar(50) NOT NULL
+  `role_name` varchar(50) NOT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -118,7 +120,8 @@ CREATE TABLE `users` (
   `password_hash` varchar(255) NOT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `role_id` int DEFAULT '3',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -130,7 +133,8 @@ CREATE TABLE `authors` (
   `author_id` int NOT NULL,
   `author_name` varchar(100) NOT NULL,
   `biography` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -142,7 +146,7 @@ CREATE TABLE `categories` (
   `category_id` int NOT NULL,
   `category_name` varchar(50) NOT NULL,
   `description` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -166,7 +170,8 @@ CREATE TABLE `books` (
   `total_copies` int DEFAULT '1',
   `available_copies` int DEFAULT '1',
   `shelf_location` varchar(50) DEFAULT NULL,
-  `book_condition` enum('excellent','good','fair','poor') DEFAULT 'good'
+  `book_condition` enum('excellent','good','fair','poor') DEFAULT 'good',
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -181,7 +186,8 @@ CREATE TABLE `borrowing_records` (
   `issue_date` datetime NOT NULL,
   `due_date` date NOT NULL,
   `return_date` date DEFAULT NULL,
-  `book_status_id` int DEFAULT 1 -- Foreign Key to book_statuses
+  `book_status_id` int DEFAULT 1, -- Foreign Key to book_statuses
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -192,7 +198,8 @@ CREATE TABLE `borrowing_records` (
 CREATE TABLE `ratings` (
   `book_id` int NOT NULL,
   `rating` decimal(2,1) DEFAULT NULL,
-  `rating_count` int DEFAULT 0
+  `rating_count` int DEFAULT 0,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -207,7 +214,8 @@ CREATE TABLE `fines` (
   `fine_amount` decimal(10,2) NOT NULL,
   `fine_reason` varchar(255) DEFAULT NULL,
   `payment_status` enum('unpaid','paid','waived') DEFAULT 'unpaid',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -221,13 +229,14 @@ CREATE TABLE `reservations` (
   `book_id` int NOT NULL,
   `reservation_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `expiry_date` timestamp NULL DEFAULT NULL,
-  `status` enum('active','fulfilled','cancelled','expired') DEFAULT 'active'
+  `status` enum('active','fulfilled','cancelled','expired') DEFAULT 'active',
+  `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Indexes for tables
+-- Indexes for tables (No change needed for new columns)
 --
 ALTER TABLE `book_statuses`
   ADD PRIMARY KEY (`book_status_id`),

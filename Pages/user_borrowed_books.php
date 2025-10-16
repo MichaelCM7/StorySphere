@@ -1,15 +1,16 @@
-<?php include 'mock-data.php'; ?>
+<?php include 'mock_user_data.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Borrowed Books | StorySphere</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="../user_style.css">
 </head>
 <body>
   <div class="container">
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../Components/user_navbar.php'; ?>
     <main>
+      <?php include '../Components/user_header.php'; ?>
       <h1>Borrowed Books</h1>
       <div class="borrowed-list">
         <?php foreach($borrowed_books as $b): ?>

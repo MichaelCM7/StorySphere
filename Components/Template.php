@@ -4,7 +4,7 @@ class Template {
     // Navigation bar
     public function navArea($config) {
         ?>
-        <nav class="navbar navbar-expand-lg header-nav" style="background-color:#0d6efd;">
+        <nav class="navbar navbar-expand-lg header-nav" style="background-color:#0d6efd;position:fixed; z-index:100;width:100%;">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="#"><?php echo $config['Website_Name']; ?></a>
             <!-- hamburger menu button for small screens -->
@@ -15,6 +15,7 @@ class Template {
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link text-white" href="admin_dashboard.php">Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="admin_manage_books.php">Manage Books</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="admin_manage_users.php">Manage Users</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="admin_reports.php">Reports</a></li>
                 <li class="nav-item"><a class="nav-link text-white" href="admin_profile.php">Profile</a></li>
                 <li class="nav-item">
@@ -83,7 +84,7 @@ class Template {
     // Page hero / heading
     public function hero($title) {
         ?>
-        <div class="mb-4">
+        <div class="mb-4" style="margin-top: 30px;">
             <h2><?php echo $title; ?></h2>
         </div>
         <?php

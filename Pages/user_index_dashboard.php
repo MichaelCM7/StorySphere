@@ -1,16 +1,16 @@
-<?php include 'mock-data.php'; ?>
+<?php include 'mock_user_data.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard | StorySphere</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="../user_style.css">
 </head>
 <body>
   <div class="container">
-    <?php include 'includes/sidebar.php'; ?>
+    <?php include '../Components/user_navbar.php'; ?>
     <main>
-      <?php include 'includes/header.php'; ?>
+      <?php include '../Components/user_header.php'; ?>
 
       <div class="stats">
         <div class="card"><h2><?= $user['borrowed_books'] ?></h2><p>Borrowed Books</p></div>
