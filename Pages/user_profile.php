@@ -1,10 +1,26 @@
-<?php include 'mock_user_data.php'; ?>
+<?php
+include 'mock_user_data.php';
+
+// Future backend hook: replace getUserProfile() to fetch from DB.
+if (!function_exists('getUserProfile')) {
+  function getUserProfile(): array {
+    global $user; // fallback to mock data
+    return [
+      'name' => $user['name'] ?? 'Reader',
+      'email' => $user['email'] ?? 'reader@example.com',
+      'phone' => $user['phone'] ?? '+1 555-123-4567',
+    ];
+  }
+}
+
+$profile = getUserProfile();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Profile | StorySphere</title>
-  <link rel="stylesheet" href="../user_style.css">
+  <link rel="stylesheet" href="../user_style.css?v=<?= filemtime(__DIR__.'/../user_style.css') ?>">
 </head>
 <body>
   <div class="container">
@@ -18,13 +34,13 @@
         <form class="profile-form">
           <h2>Personal Information</h2>
           <label>Full Name</label>
-          <input type="text" value="<?= $user['name']; ?>">
+          <input type="text" value="<?= htmlspecialchars($profile['name']); ?>">
 
           <label>Email</label>
-          <input type="email" value="sarah.johnson@example.com">
+          <input type="email" value="<?= htmlspecialchars($profile['email']); ?>">
 
           <label>Phone Number</label>
-          <input type="text" value="+1 555-123-4567">
+          <input type="text" value="<?= htmlspecialchars($profile['phone']); ?>">
 
           <button type="submit" class="save-btn">Save Changes</button>
         </form>

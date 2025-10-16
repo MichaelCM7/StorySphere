@@ -1,10 +1,22 @@
-<?php include 'mock_user_data.php'; ?>
+<?php
+include 'mock_user_data.php';
+
+// Future backend hook: replace getBorrowedBooks() body with DB query.
+if (!function_exists('getBorrowedBooks')) {
+  function getBorrowedBooks(): array {
+    global $borrowed_books; // fallback to mock data
+    return $borrowed_books ?? [];
+  }
+}
+
+$borrowed = getBorrowedBooks();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Borrowed Books | StorySphere</title>
-  <link rel="stylesheet" href="../user_style.css">
+  <link rel="stylesheet" href="../user_style.css?v=<?= filemtime(__DIR__.'/../user_style.css') ?>">
 </head>
 <body>
   <div class="container">
@@ -13,7 +25,7 @@
       <?php include '../Components/user_header.php'; ?>
       <h1>Borrowed Books</h1>
       <div class="borrowed-list">
-        <?php foreach($borrowed_books as $b): ?>
+  <?php foreach($borrowed as $b): ?>
           <div class="borrow-item">
             <div>
               <h3><?= $b['title']; ?></h3>
