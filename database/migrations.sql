@@ -146,7 +146,6 @@ CREATE TABLE `categories` (
   `category_id` int NOT NULL,
   `category_name` varchar(50) NOT NULL,
   `description` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_deleted` tinyint(1) DEFAULT '0' -- Soft Delete Field
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

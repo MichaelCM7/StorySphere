@@ -217,20 +217,33 @@ $template->hero('Manage Books');
     <div class="col-md-6">
         <div class="card card-modern p-4">
             <h5>Add New Book</h5>
-            <form>
+            <form method="post" action="../Config/admin_manage_books_submit.php">
                 <div class="mb-2">
-                    <input type="text" class="form-control" placeholder="Title">
+                    <input id="title" name="title" type="text" class="form-control" placeholder="Title" required>
                 </div>
                 <div class="mb-2">
-                    <input type="text" class="form-control" placeholder="Author">
+                    <input id="author" name="author" type="text" class="form-control" placeholder="Author" required>
                 </div>
                 <div class="mb-2">
-                    <input type="text" class="form-control" placeholder="Category">
+                    <input id="isbn" name="isbn" type="text" class="form-control" placeholder="ISBN" required>
                 </div>
                 <div class="mb-2">
-                    <input type="text" class="form-control" placeholder="ISBN">
+                    <select id="category" name="category" style="color: #212529;font-size:1rem;" class="form-control" required>
+                        <option value="" disabled selected>Select A Book Category</option>
+                        <option value="1">Science Fiction</option>
+                        <option value="2">Classic Literature</option>
+                        <option value="3">Fantasy</option>
+                        <option value="4">Mystery</option>
+                        <option value="5">Non-Fiction</option>
+                        <option value="6">Thriller</option>
+                        <option value="7">Historical Fiction</option>
+                        <option value="8">Poetry</option>
+                    </select>
                 </div>
-                <button class="btn btn-dark btn-modern">Add Book</button>
+                <div class="mb-2">
+                    <input id="number" name="number" type="text" class="form-control" placeholder="Number of Copies" required>
+                </div>
+                <button type="submit" class="btn btn-dark btn-modern">Add Book</button>
             </form>
         </div>
     </div>
