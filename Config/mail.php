@@ -4,10 +4,13 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+use Random\Engine\Secure;
 
 //Load Composer's autoloader (created by composer, not included with PHPMailer)
 require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
 //require 'client.php';
+//require_once __DIR__ . '/../Utils/otp.php';
+//require_once __DIR__.'/../Secure/secureInfo.php';
 
 class Mail{
   public function sendMail($config,$mailClient) {

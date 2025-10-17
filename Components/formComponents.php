@@ -17,7 +17,7 @@ class formComponents {
             </div>
 
             <p>
-                <a href="forgotPassword.php">Forgot Password?</a>
+                <a href="forgotPass.php">Forgot Password?</a>
              </p>
 
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
@@ -102,6 +102,7 @@ class formComponents {
     }
     public function forgotPasswordForm() {
     ?>
+    <form method="post" action="../Config/forgotPass_submit.php">
         <h2 class="text-center mb-4">Forgot Password</h2>
 
         <div class="form-group">
@@ -111,10 +112,10 @@ class formComponents {
         </div>
 
         <p class="text-center mt-3">
-            <a href="login.php">Back to Login</a>
+            <a href="signIn.php">Back to Login</a>
         </p>
-
-        <button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+        <Button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+    </form>
     <?php
 }
 
