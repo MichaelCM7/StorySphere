@@ -113,7 +113,7 @@ class formComponents {
             </form>
         <?php
     }
-    public function forgotPasswordForm() {
+    public function forgotPassForm() {
     ?>
     <form method="post" action="../Config/forgotPass_submit.php">
         <h2 class="text-center mb-4">Forgot Password</h2>
@@ -128,8 +128,32 @@ class formComponents {
             <a href="signIn.php">Back to Login</a>
         </p>
         <Button type="submit" class="btn btn-primary btn-block">Send OTP</button>
+       
     </form>
     <?php
 }
+    public function newPassForm() {
+
+    ?>
+    <form method="post" action="../Config/newPass_submit.php">
+        <h2 class="text-center mb-4">Reset Password</h2>
+
+        <div class="form-group">
+            <label for="password">New Password</label>
+            <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="50" required>
+            <small class="text-danger" id="passwordError"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="confirm_password">Confirm New Password</label>
+            <input type="password" class="form-control" id="Cpassword" name="Cpassword" minlength="8" maxlength="50" required>
+            <small class="text-danger" id="CpasswordError"></small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+    </form>
+<?php
+}
 
 }
+?>

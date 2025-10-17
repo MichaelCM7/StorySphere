@@ -30,7 +30,7 @@ $client = [
         Hello $firstname $lastname,<br><br>
         Here is your new OTP code for verifying your account on {$config['Website_Name']}.<br>
         <h1>{$_SESSION['otp']}</h1>
-        <p>This code is valid for 3 minutes.</p>
+        <p>This code is valid for 2 minutes.</p>
         <br><br>
         Regards,<br>
         Support Team.<br>

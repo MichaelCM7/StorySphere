@@ -69,7 +69,7 @@
 
   if($result){
     echo "Signup successful. Please check your email for verification.";
-    // header("Location: ../Pages/mailVerify.php");
+     header("Location: ../Pages/mailVerify.php");
     exit;
   } else {
     echo "Sign Up Failed";

@@ -26,8 +26,11 @@ class generalComponents {
                         } else if (basename($_SERVER['PHP_SELF']) == 'mailVerify.php' || basename($_SERVER['PHP_SELF']) == 'MailVerify.php') {
                             $form_components->mailVerifyForm();
                         }
+                        else if (basename($_SERVER['PHP_SELF']) == 'resetPassword.php' || basename($_SERVER['PHP_SELF']) == 'ResetPassword.php') {
+                            $form_components->newPassForm();
+                        }
                          else {
-                            $form_components->forgotPasswordForm();
+                            $form_components->forgotPassForm();
                         }
                         ?>
                     </div>
