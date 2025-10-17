@@ -11,7 +11,8 @@ $connection = new mysqli(
 );
 
 if ($connection->connect_error) {
-    die("Connection failed: " . $connection->connect_error);
+    
+    $connection = null;
 }
-// echo "Connected successfully";
+
 ?>

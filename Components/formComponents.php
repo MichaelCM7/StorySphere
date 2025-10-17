@@ -47,6 +47,19 @@ class formComponents {
             </div>
 
             <div class="form-group">
+                <label for="role">Role</label>
+                <select class="form-control" id="user-role" name="user-role" required>
+                    <option value="" disabled>Select a role</option>
+                    
+                    <option value="reader" selected>Reader</option> 
+                    
+                    <option value="librarian">Librarian</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <small class="text-danger" id="firstnameError"></small>
+            </div>
+
+            <div class="form-group">
                 <label for="phonenumber">Phone Number</label>
                 <input type="text" class="form-control" id="phonenumber" name="phonenumber" minlength="10" maxlength="10" required>
                 <small class="text-danger" id="phonenumberError"></small>
@@ -60,13 +73,13 @@ class formComponents {
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" maxlength="8" required>
+                <input type="password" class="form-control" id="password" name="password" minlength="8" maxlength="50" required>
                 <small class="text-danger" id="passwordError"></small>
             </div>
 
             <div class="form-group">
                 <label for="confirm_password">Confirm Password</label>
-                <input type="password" class="form-control" id="Cpassword" name="Cpassword" maxlength="8" required>
+                <input type="password" class="form-control" id="Cpassword" name="Cpassword" minlength="8" maxlength="50" required>
                 <small class="text-danger" id="CpasswordError"></small>
             </div>
 
@@ -93,7 +106,7 @@ class formComponents {
                 <h4 class="text-center mb-4"></h4>
 
                 <p class="text-center mt-3">
-                    <a href="">Resend The Code</a>
+                    <a href="../Config/resendotp.php">Resend The Code</a>
                 </p>
 
                 <button type="submit" class="btn btn-primary btn-block">Verify</button>

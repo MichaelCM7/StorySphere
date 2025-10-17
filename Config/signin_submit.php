@@ -1,62 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/IAP/styles/tables.css">
-  <title>Sign In Submit</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/IAP/styles/tables.css">
+<title>Sign In Submit</title>
 </head>
 <body>
-  <?php
-  require_once __DIR__ . '/../Utils/otp.php';
-  require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
+<?php
+  // Ensure this file exists and handles your database connection setup.
   require 'dbconnection.php';
-  require 'client.php';
-  require 'mail.php';
+
+  // The following lines are removed as they are not needed for a basic login check:
+  // require_once __DIR__ . '/../Utils/otp.php';
+  // require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
+  // require 'client.php';
+  // require 'mail.php';
 
 
-  echo "<pre>";
-  print_r($_POST);
-  echo "</pre>";
-
-
+  // Get and sanitize input
   $email = $_POST["email"];
   $password = $_POST["password"];
-   
-  $prepStatemnt = $connection->prepare("SELECT password FROM table_name WHERE email = ?;");
+
+  // Prepare the statement to fetch the hashed password for the given email
+  $prepStatement = $connection->prepare("SELECT password FROM table_name WHERE email = ?;");
   $prepStatement->bind_param("s", $email); 
   $prepStatement->execute();
   $result = $prepStatement->get_result();
 
-  if ($result->num_rows === 0) {
-      echo "Error: No user found with this email.";
-      exit(); 
-  }
+  // Check if exactly one user was found
+  if ($result->num_rows === 1) {
   $row = $result->fetch_assoc();
-  $hashed_password = $row['password'];
-  if (!password_verify($password, $hashed_password)) {
-      echo "Error: Incorrect password.";
-      exit(); 
-  }
-  // Generate OTP
-  $otp=otpGenerator();
-  
+  $stored_hash = $row["password"];
 
-  // Send the email
-  $Mail = new Mail();
-  $result = $Mail->sendMail($config, $client,$otp);
-
-  if($result){
-    echo "Sign In successful. Please check your email for verification.";
-    header("location: ../Pages/mailVerify.php");
-    exit;
-    return true;
+    // Verify the submitted password against the stored hash
+    if (password_verify($password, $stored_hash)) {
+      echo "Login Successful";
+      // *** ACTION AFTER SUCCESS ***
+      // You can add session start and redirection here if needed:
+      // session_start();
+      // $_SESSION['user_email'] = $email;
+      // header("location: ../Pages/dashboard.php");
+      // exit;
+    } else {
+      echo "Login Failed. Incorrect Password.";
+    } 
   } else {
-    echo "Sign In Failed";
-    return false;
+    echo "Login Failed. Email not found!";
   }
 
-
+  $prepStatement->close();
+  $connection->close();
 ?>
 </body>
 </html>

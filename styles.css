@@ -1,0 +1,246 @@
+/* Global Styles for Story Sphere */
+:root {
+  --primary: #007bff; /* matches signup page color */
+  --primary-hover: #0069d9;
+  --bg: #f8fafc;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --nav-bg: #ffffffcc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #ffffff, var(--bg));
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Layout */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 1.25rem 3rem; /* top padding accounts for fixed navbar */
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+header h1 {
+  font-size: 2.25rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.3px;
+  color: var(--text);
+}
+
+header p {
+  margin: 0 auto;
+  max-width: 850px;
+  color: var(--muted);
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+}
+
+.navbar .brand {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.navbar .links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.navbar .nav-link {
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+  background: #f3f4f6;
+}
+
+/* Sections as cards */
+main {
+  display: block;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .get-started {
+    grid-column: 1 / -1;
+  }
+}
+
+.intro, .features, .get-started {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+.intro h2, .features h2, .get-started h2 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+}
+
+/* Feature list */
+.features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.features li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin: 0.4rem 0;
+}
+
+.features li::before {
+  content: '';
+  position: absolute;
+  left: 0.35rem;
+  top: 0.55rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* CTA */
+.get-started p {
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.7rem 1.15rem;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(0, 123, 255, 0.25);
+}
+
+.btn:hover {
+  background: var(--primary-hover);
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.25);
+}
+
+.btn:focus {
+  outline: 3px solid rgba(0, 123, 255, 0.35);
+  outline-offset: 2px;
+}
+
+/* Footer */
+footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+footer p {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Shared form styles (benefits Login.php and Signup.php when added) */
+form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+label {
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.18);
+}
+
+button[type="submit"] {
+  background: var(--primary);
+  color: #fff;
+  border: 0;
+  padding: 0.7rem 1.15rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(0, 123, 255, 0.25);
+}
+
+button[type="submit"]:hover {
+  background: var(--primary-hover);
+}
+
+button[type="submit"]:active {
+  transform: translateY(1px);
+}
