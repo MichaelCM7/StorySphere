@@ -18,6 +18,11 @@ $email = $_SESSION['email'] ?? '';
 
 // If not, you must prompt the user to sign up again or store these in session during signup.
 
+if (empty($email)) {
+    header("Location: ../Pages/signUp.php?error=noemail");
+    exit;
+}
+
 // Prepare the email client array
 require 'constants.php';
 $client = [
@@ -41,9 +46,12 @@ $client = [
 // Send the email
 require 'mail.php';
 $mailer = new Mail();
-$mailer->sendMail($config, $client);
+if (!$mailer->sendMail($config, $client)) {
+    // Optionally, redirect with an error or show a message
+    header("Location: ../Pages/mailVerify.php?error=mailfail");
+    exit;
+}
 
-// Redirect back to verification page
 header("Location: ../Pages/mailVerify.php");
 exit;
 ?>
