@@ -1,16 +1,23 @@
 <?php
+
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
+include '../Components/auth_guard.php';
 include 'mock_user_data.php';
 
 // Future backend hook: replace getUserDashboardStats() to fetch from DB.
 if (!function_exists('getUserDashboardStats')) {
   function getUserDashboardStats(): array {
-    global $user; // fallback to mock data
+    // Use mock stats only, never override $user from auth_guard
+    global $mock_user;
     return [
-      'borrowed_books' => $user['borrowed_books'] ?? 0,
-      'pending_returns' => $user['pending_returns'] ?? 0,
-      'fines' => $user['fines'] ?? 0,
-      'books_read' => $user['books_read'] ?? 0,
-      'name' => $user['name'] ?? 'Reader',
+      'borrowed_books' => $mock_user['borrowed_books'] ?? 0,
+      'pending_returns' => $mock_user['pending_returns'] ?? 0,
+      'fines' => $mock_user['fines'] ?? 0,
+      'books_read' => $mock_user['books_read'] ?? 0,
+      // Display name should come from DB user via header, not here
+      'name' => $mock_user['name'] ?? 'Reader',
     ];
   }
 }
@@ -39,7 +46,7 @@ $stats = getUserDashboardStats();
 
       <section class="activity">
         <h3>Recent Activity</h3>
-        <?php foreach($recent_activity as $act): ?>
+  <?php foreach(($recent_activity ?? []) as $act): ?>
           <div class="activity-item">
             <strong><?= $act['action']; ?>:</strong> <?= $act['book']; ?> 
             <span><?= $act['time']; ?></span>

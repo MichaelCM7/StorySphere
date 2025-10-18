@@ -2,14 +2,11 @@
 
 <?php
 
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
+// Bootstrap session/user and DB
+include '../Components/auth_guard.php';
 
-// Use project's mysqli connection
-include '../Config/dbconnection.php';
-
-// Temporary user ID (replace with session later)
-$user_id = 1;
+// Current user id from guard
+$user_id = (int) $user['id'];
 
 // Fetch fines list for a user (mysqli)
 if (!function_exists('getUserFines')) {
@@ -84,11 +81,7 @@ $total = getUserTotalFines($connection, $user_id);
           </tr>
         </thead>
         <tbody>
-          <?php if (empty($fines)): ?>
-            <tr>
-              <td colspan="2">No fines found for your account.</td>
-            </tr>
-          <?php else: ?>
+          <?php if (!empty($fines)): ?>
             <?php foreach ($fines as $f): ?>
               <tr>
                 <td><?= htmlspecialchars($f['fine_reason']); ?></td>
@@ -125,7 +118,10 @@ $total = getUserTotalFines($connection, $user_id);
         pageLength: 5,
         lengthChange: true,
         ordering: true,
-        searching: true
+        searching: true,
+        language: {
+          emptyTable: 'No fines found for your account.'
+        }
       });
     });
   </script>

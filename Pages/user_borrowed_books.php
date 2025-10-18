@@ -1,4 +1,5 @@
 <?php
+include '../Components/auth_guard.php';
 include 'mock_user_data.php';
 
 // Future backend hook: replace getBorrowedBooks() body with DB query.
