@@ -1,4 +1,9 @@
 <?php
+
+
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+include '../Components/auth_guard.php';
 include 'mock_user_data.php';
 
 // Future backend hook: replace getBorrowedBooks() body with DB query.

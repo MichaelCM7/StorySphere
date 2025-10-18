@@ -1,10 +1,14 @@
 <?php
-include 'mock_user_data.php';
+
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
+include '../Components/auth_guard.php';
 
 // Future backend hook: replace getUserProfile() to fetch from DB.
 if (!function_exists('getUserProfile')) {
   function getUserProfile(): array {
-    global $user; // fallback to mock data
+    global $user; // from auth_guard.php
     return [
       'name' => $user['name'] ?? 'Reader',
       'email' => $user['email'] ?? 'reader@example.com',

@@ -1,7 +1,7 @@
 <?php
 // Mock data for testing
 
-$user = [
+$mock_user = [
   "name" => "Sarah Johnson",
   "borrowed_books" => 5,
   "pending_returns" => 2,
