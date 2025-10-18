@@ -2,6 +2,9 @@
 
 <?php
 
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+
 // Bootstrap session/user and DB
 include '../Components/auth_guard.php';
 
