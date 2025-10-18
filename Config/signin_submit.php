@@ -8,51 +8,100 @@
 </head>
 <body>
 <?php
-  // Ensure this file exists and handles your database connection setup.
-  require 'dbconnection.php';
+// Start the session at the very beginning
+session_start();
 
-  // The following lines are removed as they are not needed for a basic login check:
-  // require_once __DIR__ . '/../Utils/otp.php';
-  // require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
-  // require 'client.php';
-  // require 'mail.php';
+// Ensure this file exists and handles your database connection setup.
+require 'dbconnection.php';
 
+// Define constants for better readability and maintainability
+define('ROLE_ADMIN', 1);
+define('ROLE_LIBRARIAN', 2);
+define('ROLE_USER', 3);
 
-  // Get and sanitize input
-  $email = $_POST["email"];
-  $password = $_POST["password"];
+// Function for secure redirection
+function redirect_to(string $path): void {
+    header("Location: " . $path);
+    exit;
+}
 
-  // Prepare the statement to fetch the hashed password for the given email
-  $prepStatement = $connection->prepare("SELECT password_hash FROM users WHERE email = ?;");
-  $prepStatement->bind_param("s", $email); 
-  $prepStatement->execute();
-  $result = $prepStatement->get_result();
+// Get and sanitize input
+$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+$password = $_POST["password"];
 
-  print_r($result);
+// Check if email and password were provided and connection is valid
+if (empty($email) || empty($password) || !isset($connection)) {
+    $_SESSION['login_error'] = "Missing email or password.";
+    redirect_to("../Pages/login_page.php");
+}
 
-  // Check if exactly one user was found
-  if ($result->num_rows === 1) {
-  $row = $result->fetch_assoc();
-  $stored_hash = $row["password_hash"];
+// Prepare the statement to fetch the hashed password AND role_id (merged)
+$sql = "SELECT password_hash, role_id FROM users WHERE email = ? LIMIT 1;";
+$stmt = $connection->prepare($sql);
+
+if (!$stmt) {
+    // Handle prepare error
+    $connection->close();
+    $_SESSION['login_error'] = "A server error occurred during authentication.";
+    redirect_to("../Pages/login_page.php");
+}
+
+$stmt->bind_param("s", $email); 
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Check if exactly one user was found
+if ($user) {
+    $stored_hash = $user["password_hash"];
+    $storedRole = (int)$user["role_id"];
 
     // Verify the submitted password against the stored hash
     if (password_verify($password, $stored_hash)) {
-      echo "Login Successful";
-      // *** ACTION AFTER SUCCESS ***
-      // You can add session start and redirection here if needed:
-      // session_start();
-      // $_SESSION['user_email'] = $email;
-      // header("location: ../Pages/dashboard.php");
-      // exit;
-    } else {
-      echo "Login Failed. Incorrect Password.";
-    } 
-  } else {
-    echo "Login Failed. Email not found!";
-  }
+        
+        session_regenerate_id(true); // Prevents Session Fixation
+        
+        // Session setup
+        $_SESSION['logged_in'] = true;
+        $_SESSION['user_email'] = $email;
+        $_SESSION['role_id'] = $storedRole;
 
-  $prepStatement->close();
-  $connection->close();
+        // role navigation using constants
+        switch ($storedRole) {
+            case ROLE_ADMIN:
+                redirect_to("../Pages/admin_dashboard.php");
+                break;
+            case ROLE_LIBRARIAN:
+                redirect_to("../Pages/librarian_dashboard.php");
+                break;
+            case ROLE_USER:
+                redirect_to("../Pages/user_index_dashboard.php");
+                break;
+            default:
+                // Unknown role, fail safe
+                session_unset();
+                session_destroy();
+                $_SESSION['login_error'] = "Login failed. Unknown user role.";
+                redirect_to("../Pages/login_page.php");
+                break;
+        }
+
+    } else {
+        // Generic failure message for security
+        $_SESSION['login_error'] = "Invalid email or password.";
+        redirect_to("../Pages/login_page.php");
+    } 
+} else {
+    // Generic failure message for security
+    $_SESSION['login_error'] = "Invalid email or password.";
+    redirect_to("../Pages/login_page.php");
+}
+
+$stmt->close();
+$connection->close();
+
+// This line will only be reached on execution failure before redirect.
+exit;
 ?>
 </body>
 </html>

@@ -48,14 +48,14 @@
   }
 
   //Insert data into database
-  // $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, phone_number, email, password_hash, role_id) VALUES (?, ?, ?, ?, ?, ?)");
-  // $stmt->bind_param("sssssi", $_SESSION['firstname'], $_SESSION['lastname"], $_SESSION['phonenumber"], $_SESSION['email'], $hashed_password,$role_id);
-  // if ($stmt->execute()) {
-  //     echo "Data inserted successfully!";
-  // } else {
-  //     echo "Error inserting data: " . $stmt->error;
-  // }
-  // $stmt->close();
+  $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, phone_number, email, password_hash, role_id) VALUES (?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("sssssi", $_SESSION['firstname'], $_SESSION['lastname'], $_SESSION['phonenumber'], $_SESSION['email'], $hashed_password, $role_id);
+  if ($stmt->execute()) {
+      echo "Data inserted successfully!";
+  } else {
+      echo "Error inserting data: " . $stmt->error;
+  }
+  $stmt->close();
 
   require 'client.php';
   require 'mail.php';
@@ -75,7 +75,7 @@
     exit;
   } else {
     echo "Sign Up Failed";
-    //header("Location: ../Pages/error.php");
+    header("Location: ../Pages/error.php");
     exit();
   }
 
