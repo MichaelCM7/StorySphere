@@ -23,15 +23,17 @@
   $password = $_POST["password"];
 
   // Prepare the statement to fetch the hashed password for the given email
-  $prepStatement = $connection->prepare("SELECT password FROM table_name WHERE email = ?;");
+  $prepStatement = $connection->prepare("SELECT password_hash FROM users WHERE email = ?;");
   $prepStatement->bind_param("s", $email); 
   $prepStatement->execute();
   $result = $prepStatement->get_result();
 
+  print_r($result);
+
   // Check if exactly one user was found
   if ($result->num_rows === 1) {
   $row = $result->fetch_assoc();
-  $stored_hash = $row["password"];
+  $stored_hash = $row["password_hash"];
 
     // Verify the submitted password against the stored hash
     if (password_verify($password, $stored_hash)) {
