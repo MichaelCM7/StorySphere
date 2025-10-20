@@ -23,6 +23,24 @@ if (!function_exists('getUserDashboardStats')) {
 }
 
 $stats = getUserDashboardStats();
+
+// If a ?uid is provided in the URL, use it; otherwise use the logged-in user id
+$target_uid = isset($_GET['uid']) && ctype_digit((string)$_GET['uid']) ? (int)$_GET['uid'] : ($user['id'] ?? null);
+if ($target_uid !== null && isset($connection) && $connection instanceof mysqli) {
+    $stmt = $connection->prepare("SELECT COALESCE(SUM(fine_amount),0) AS total FROM fines WHERE user_id = ?");
+    if ($stmt) {
+        $stmt->bind_param('i', $target_uid);
+        if ($stmt->execute()) {
+            $res = $stmt->get_result();
+            $row = $res ? $res->fetch_assoc() : null;
+            if ($res) { $res->free(); }
+            if (isset($row['total'])) {
+                $stats['fines'] = (float)$row['total'];
+            }
+        }
+        $stmt->close();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
