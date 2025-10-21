@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require '../Components/generalComponents.php';
 require '../Components/formComponents.php';
 
