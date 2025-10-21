@@ -1,9 +1,10 @@
 <?php
+// Start the session if it hasn't been started yet
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/otp.php';
-// Start the session if it hasn't been started yet
+
 function storeOtp($otp)
 {
     $_SESSION['otp'] = $otp;
