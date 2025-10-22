@@ -258,6 +258,9 @@ if (!isset($connection) || $connection->connect_error) {
             opacity: 0.6;
         }
 
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+
         /* Responsive Layout (for smaller screens) */
         @media screen and (max-width: 768px) {
             .card {
@@ -269,7 +272,6 @@ if (!isset($connection) || $connection->connect_error) {
             }
         }
     </style>
-
 </head>
 <body>
 
@@ -309,13 +311,13 @@ if (!isset($connection) || $connection->connect_error) {
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark">Save Changes</button>
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Changes</button>
         </div>
       </form>
     </div>
   </div>
-</div>
+</div>  
 
 <div class="container">
   <div class="row mb-4">
@@ -343,7 +345,7 @@ if (!isset($connection) || $connection->connect_error) {
               <option value="Member">Member</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-dark btn-modern">Add User</button>
+          <button type="submit" class="btn btn-success">Add User</button>
         </form>
       </div>
     </div>
