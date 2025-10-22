@@ -244,9 +244,17 @@ class BorrowingsSection extends DbBackedSection
                             </td>
                             <td>
                                 <?php if ($borrowing['status'] === 'borrowed' || $borrowing['status'] === 'overdue'): ?>
-                                    <a href="#" class="btn btn-sm btn-warning" title="Return">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </a>
+                                    <button onclick="returnBook(<?= (int)$borrowing['borrowing_id'] ?>, this)" 
+                                            class="btn btn-sm btn-warning" 
+                                            title="Return">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Return
+                                    </button>
+                                <?php elseif ($borrowing['status'] === 'returned'): ?>
+                                    <button onclick="revertReturn(<?= (int)$borrowing['borrowing_id'] ?>, this)" 
+                                            class="btn btn-sm btn-info" 
+                                            title="Revert Return">
+                                        <i class="bi bi-arrow-repeat"></i> Revert
+                                    </button>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -257,6 +265,71 @@ class BorrowingsSection extends DbBackedSection
         <div class="text-end mt-3">
             <a href="librarian_borrowings.php" class="btn btn-dark btn-modern">View All Borrowings</a>
         </div>
+        <script>
+        function returnBook(borrowingId, button) {
+            if (!confirm('Are you sure you want to return this book?')) return;
+            
+            fetch('../Config/return_book.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({borrowing_id: borrowingId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the status cell
+                    const row = button.closest('tr');
+                    const statusCell = row.querySelector('td:nth-last-child(2)');
+                    statusCell.innerHTML = '<span class="badge text-bg-secondary">Returned</span>';
+                    // Replace return button with revert button
+                    button.innerHTML = '<i class="bi bi-arrow-repeat"></i> Revert';
+                    button.classList.replace('btn-warning', 'btn-info');
+                    button.onclick = function() { revertReturn(borrowingId, this); };
+                    alert('Book returned successfully');
+                } else {
+                    alert(data.message || 'Failed to return book');
+                }
+            })
+            .catch(error => {
+                alert('Error processing return: ' + error.message);
+            });
+        }
+
+        function revertReturn(borrowingId, button) {
+            if (!confirm('Are you sure you want to revert this return? This will mark the book as borrowed again.')) return;
+            
+            fetch('../Config/revert_return.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({borrowing_id: borrowingId})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the status cell
+                    const row = button.closest('tr');
+                    const statusCell = row.querySelector('td:nth-last-child(2)');
+                    const dueDate = new Date(row.querySelector('td:nth-child(4)').textContent);
+                    const isOverdue = new Date() > dueDate;
+                    const status = isOverdue ? 'Overdue' : 'Borrowed';
+                    const statusClass = isOverdue ? 'danger' : 'success';
+                    
+                    statusCell.innerHTML = `<span class="badge text-bg-${statusClass}">${status}</span>`;
+                    
+                    // Replace revert button with return button
+                    button.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Return';
+                    button.classList.replace('btn-info', 'btn-warning');
+                    button.onclick = function() { returnBook(borrowingId, this); };
+                    alert('Book return reverted successfully');
+                } else {
+                    alert(data.message || 'Failed to revert return');
+                }
+            })
+            .catch(error => {
+                alert('Error reverting return: ' + error.message);
+            });
+        }
+        </script>
         <?php
         return ob_get_clean();
     }
@@ -418,7 +491,7 @@ class PendingReservationsSection extends DbBackedSection
                        r.reservation_date
                 FROM reservations r
                 JOIN users u ON u.user_id = r.user_id
-                JOIN books b ON b.book_id = r.book_i
+                JOIN books b ON b.book_id = r.book_id
                 WHERE r.status = 'active'
                 ORDER BY r.reservation_date DESC
                 LIMIT 20";
