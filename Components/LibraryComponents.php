@@ -563,6 +563,8 @@ class LibrarianTemplate
             </title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+            <!-- DataTables local CSS (ensure placed after base styles) -->
+            <link rel="stylesheet" href="../Datatables/3.1.1.css">
             <style>
                 body { background-color: #f8f9fa; min-height: 100vh; display: flex; flex-direction: column; }
                 .content { padding: 20px; flex: 1; }
@@ -593,6 +595,61 @@ class LibrarianTemplate
         <div class="footer mt-4">
             &copy; <?= date('Y'); ?> <?= htmlspecialchars($config['Website_Name'] ?? 'StorySphere'); ?>
         </div>
+        <!-- Load scripts: jQuery (local) -> DataTables core -> optional dependencies -->
+        <script src="../Datatables/3.7.1.js"></script>
+        <script src="../Datatables/2.1.4.js"></script>
+        <script src="../Datatables/dependancy1.js"></script>
+        <script src="../Datatables/dependancy2.js"></script>
+        <script src="../Datatables/dependancy3.js"></script>
+        <script src="../Datatables/dependancy4.js"></script>
+        <script src="../Datatables/dependancy5.js"></script>
+        <script src="../Datatables/dependacy6.js"></script>
+
+        <script>
+        // Robust initializer: wait for jQuery and DataTables, then initialize tables inside cards
+        (function() {
+            function initDataTablesOnce() {
+                if (!(window.jQuery && window.jQuery.fn && window.jQuery.fn.DataTable)) {
+                    return false;
+                }
+                try {
+                    var $ = window.jQuery;
+                    // initialize any table that isn't already a DataTable
+                    $('table').each(function(i, tbl) {
+                        var $tbl = $(tbl);
+                        if (!$tbl.attr('id')) {
+                            $tbl.attr('id', 'tbl-auto-' + i + '-' + Date.now());
+                        }
+                        if (!$.fn.DataTable.isDataTable($tbl)) {
+                            $tbl.DataTable({ pageLength: 25, lengthChange: false, responsive: true });
+                        }
+                    });
+                    console.log('DataTables initialized on page tables');
+                    return true;
+                } catch (e) {
+                    console.warn('Error initializing DataTables', e);
+                    return false;
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    var tries = 0;
+                    (function waitForDt(){
+                        if (initDataTablesOnce() || ++tries > 50) return;
+                        setTimeout(waitForDt, 150);
+                    })();
+                });
+            } else {
+                var tries = 0;
+                (function waitForDt(){
+                    if (initDataTablesOnce() || ++tries > 50) return;
+                    setTimeout(waitForDt, 150);
+                })();
+            }
+        })();
+        </script>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         </body>
         </html>
