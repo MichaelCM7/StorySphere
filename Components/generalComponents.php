@@ -3,37 +3,64 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <title><?php echo "StorySphere" ?></title>
+    <title><?php echo "StorySphere"; ?></title>
     <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-            crossorigin="anonymous">
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
 </head>
 <body>
 
 <?php
 class generalComponents {
-    public function formArea($form_components,$type='signIn') {
+    public function formArea($form_components, $type = '') {
         ?>
         <div class="container my-5">
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="card shadow-sm p-4">
-                       <?php 
-                        if (basename($_SERVER['PHP_SELF']) == 'signIn.php' || basename($_SERVER['PHP_SELF']) == 'SignIn.php') {
-                            $form_components->signInForm();
-                        } else if(basename($_SERVER['PHP_SELF']) == 'signUp.php' || basename($_SERVER['PHP_SELF']) == 'SignUp.php') {
-                            $form_components->signUpForm();
-                        } else if (basename($_SERVER['PHP_SELF']) == 'mailVerify.php' || basename($_SERVER['PHP_SELF']) == 'MailVerify.php') {
-                            $form_components->mailVerifyForm();
-                        }
-                        else if (basename($_SERVER['PHP_SELF']) == 'resetPassword.php' || basename($_SERVER['PHP_SELF']) == 'ResetPassword.php') {
-                            $form_components->newPassForm();
-                        }
-                        else if (basename($_SERVER['PHP_SELF']) == 'forgotOtp.php' || basename($_SERVER['PHP_SELF']) == 'ForgotOtp.php') {
-                            $form_components->forgotOtpForm();
-                        }
-                         else {
-                            $form_components->forgotPassForm();
+                        <?php
+                        // If $type is passed, use it directly
+                        if (!empty($type)) {
+                            switch ($type) {
+                                case 'signIn':
+                                    $form_components->signInForm();
+                                    break;
+                                case 'signUp':
+                                    $form_components->signUpForm();
+                                    break;
+                                case 'mailVerify':
+                                    $form_components->mailVerifyForm();
+                                    break;
+                                case 'forgotPass':
+                                    $form_components->forgotPassForm();
+                                    break;
+                                case 'forgotOtp':
+                                    $form_components->forgotOtpForm();
+                                    break;
+                                case 'newPass':
+                                    $form_components->newPassForm();
+                                    break;
+                                default:
+                                    $form_components->signInForm();
+                                    break;
+                            }
+                        } 
+                        // Otherwise detect automatically from filename
+                        else {
+                            $page = strtolower(basename($_SERVER['PHP_SELF']));
+                            if ($page === 'signin.php') {
+                                $form_components->signInForm();
+                            } elseif ($page === 'signup.php') {
+                                $form_components->signUpForm();
+                            } elseif ($page === 'mailverify.php') {
+                                $form_components->mailVerifyForm();
+                            } elseif ($page === 'forgototp.php') {
+                                $form_components->forgotOtpForm();
+                            } elseif ($page === 'resetpassword.php' || $page === 'newpass.php') {
+                                $form_components->newPassForm();
+                            } else {
+                                $form_components->forgotPassForm();
+                            }
                         }
                         ?>
                     </div>
@@ -49,8 +76,8 @@ class generalComponents {
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
-<script >
-   document.addEventListener('DOMContentLoaded', () => {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('signUpForm');
     if (!form) return;
 
@@ -67,17 +94,17 @@ class generalComponents {
     const validate = () => {
         usernameError.textContent = username.value.trim() ? '' : 'Username is required.';
 
-        if(!email.value.trim()) {
+        if (!email.value.trim()) {
             emailError.textContent = "Email is required.";
-        } else if(!email.value.includes('@')) {
+        } else if (!email.value.includes('@')) {
             emailError.textContent = "Email must contain @.";
         } else {
             emailError.textContent = "";
         }
 
-        if(!password.value.trim()) {
+        if (!password.value.trim()) {
             passwordError.textContent = "Password is required.";
-        } else if(password.value.length > 8) {
+        } else if (password.value.length > 8) {
             passwordError.textContent = "Password cannot exceed 8 characters.";
         } else {
             passwordError.textContent = "";
@@ -94,8 +121,8 @@ class generalComponents {
         }
     });
 });
-
-</script>   
+</script>
 
 </body>
-</html> 
+
+</html>

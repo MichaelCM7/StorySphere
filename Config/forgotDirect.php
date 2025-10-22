@@ -10,10 +10,6 @@ if (isset($_SESSION['otp'], $_SESSION['otp_created']) &&
       if (trim((string)$enteredCode) === trim((string)$_SESSION['otp'])) {
           unset($_SESSION['otp'], $_SESSION['otp_created']);
           $_SESSION['otp_verified'] = true;
-           //echo "<pre>";
-          //print_r($_SESSION);
-         // echo "</pre>";
-        //exit();
           header("Location: ../Pages/newPass.php");
 
           exit();
