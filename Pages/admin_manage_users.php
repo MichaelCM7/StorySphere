@@ -59,13 +59,25 @@ if (!isset($connection) || $connection->connect_error) {
             }
 
             // Generate the HTML for the action buttons (updated to user-related actions)
+            $isDeleted = isset($row['is_deleted']) ? (int)$row['is_deleted'] : 0;
+
+            if ($isDeleted === 1) {
+                $deleteButton = '
+                    <button class="btn btn-success" onclick="toggleUserDelete(' . $userId . ', 0, this)">
+                        <i class="bi bi-arrow-counterclockwise"></i> Revert
+                    </button>';
+            } else {
+                $deleteButton = '
+                    <button class="btn btn-danger" onclick="toggleUserDelete(' . $userId . ', 1, this)">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>';
+            }
+
             $actions = '
                 <button class="btn btn-warning" onclick="editUser(' . $userId . ')">
                     <i class="bi bi-pencil"></i> Edit
                 </button>
-                <button class="btn btn-danger" onclick="deleteUser(' . $userId . ')">
-                    <i class="bi bi-trash"></i> Delete
-                </button>
+                ' . $deleteButton . '
             ';
             
             // Build the table row with 6 columns
@@ -98,6 +110,8 @@ if (!isset($connection) || $connection->connect_error) {
     
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- In <head> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- DataTables Dependencies -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -257,30 +271,71 @@ if (!isset($connection) || $connection->connect_error) {
 </head>
 <body>
 
-<div class="container">
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card card-modern p-4">
-            <h5>Add New User</h5> <!-- Updated Form Title -->
-            <form>
-                <div class="mb-2">
-                    <input type="text" class="form-control" placeholder="Full Name">
-                </div>
-                <div class="mb-2">
-                    <input type="email" class="form-control" placeholder="Email Address">
-                </div>
-                <div class="mb-2">
-                    <select class="form-control">
-                        <option value="">Select Role</option>
-                        <option value="Reader">Reader</option>
-                        <option value="Librarian">Librarian</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                </div>
-                <button class="btn btn-dark btn-modern">Add User</button> <!-- Updated Button Text -->
-            </form>
+<!-- Edit User Modal -->
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form id="editUserForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="edit_user_id">
+          <div class="mb-3">
+            <label for="edit_name" class="form-label">Full Name</label>
+            <input type="text" id="edit_name" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="edit_email" class="form-label">Email</label>
+            <input type="email" id="edit_email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="edit_role" class="form-label">Role</label>
+            <select id="edit_role" class="form-select" required>
+                <option value="Administrator">Administrator</option>
+                <option value="Librarian">Librarian</option>
+                <option value="Member">Member</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-dark">Save Changes</button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card card-modern p-4">
+        <h5>Add New User</h5>
+        <form id="addUserForm">
+          <div class="mb-2">
+            <input type="text" id="add_name" class="form-control" placeholder="Full Name" required>
+          </div>
+          <div class="mb-2">
+            <input type="email" id="add_email" class="form-control" placeholder="Email Address" required>
+          </div>
+          <div class="mb-2">
+            <select id="add_role" class="form-control" required>
+              <option value="">Select Role</option>
+              <option value="Administrator">Administrator</option>
+              <option value="Librarian">Librarian</option>
+              <option value="Member">Member</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-dark btn-modern">Add User</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
     <div class="row">
@@ -311,37 +366,138 @@ if (!isset($connection) || $connection->connect_error) {
     </div>
 </div>
 
+<!-- Bootstrap JS must be before your own JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // Updated Placeholder functions for managing users
-    function editUser(userId) {
-        console.log('Action: Edit User ID:', userId);
-        // Implement modal or redirection to edit user details
-    }
+let editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
 
-    function deleteUser(userId) {
-        console.log('Action: Delete User ID:', userId);
-        // Implement confirmation and backend request to delete user
-    }
+function editUser(userId) {
+    let row = document.querySelector(`#all-users-table button[onclick="editUser(${userId})"]`).closest("tr");
+    let name = row.children[1].textContent.trim();
+    let email = row.children[2].textContent.trim();
+    let role = row.children[3].textContent.trim();
 
-    // DataTables Initialization Script (Updated to target the new table ID)
-    $(document).ready(function() {
-        $('#all-users-table').DataTable({
-            "paging": true,        
-            "searching": true,     
-            "ordering": true,      
-            "info": true,          
-            "responsive": true,
-            
-            "columnDefs": [
-                { "orderable": false, "targets": 5 } // Disable sorting on 'Actions' column
-            ]
-        });
+    $('#edit_user_id').val(userId);
+    $('#edit_name').val(name);
+    $('#edit_email').val(email);
+    $('#edit_role').val(role);
+
+    editModal.show();
+}
+
+$('#editUserForm').on('submit', function(e) {
+    e.preventDefault();
+
+    let userId = $('#edit_user_id').val();
+    let name = $('#edit_name').val();
+    let email = $('#edit_email').val();
+    let role = $('#edit_role').val();
+
+    console.log("Sending:", { user_id: userId, name: name, email: email, role: role });
+
+    fetch('update_user.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: userId,
+            name: name,
+            email: email,
+            role: role
+        })
+    })
+    .then(response => response.json())
+    .then(res => {
+        console.log("Response:", res);
+        if (res.success) {
+            alert("User updated successfully!");
+            location.reload();
+        } else {
+            alert("Update failed: " + res.message);
+        }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("Unexpected error while updating user.");
     });
+});
+
+// Handle Add User form submission
+$('#addUserForm').on('submit', function(e) {
+  e.preventDefault();
+
+  let name = $('#add_name').val();
+  let email = $('#add_email').val();
+  let role = $('#add_role').val();
+
+  if (!name || !email || !role) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  fetch('add_user.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: name, email: email, role: role })
+  })
+  .then(response => response.json())
+  .then(res => {
+    console.log("Add User Response:", res);
+    if (res.success) {
+      alert("✅ User added successfully!");
+      location.reload(); // reloads to show new user in table
+    } else {
+      alert("❌ Failed to add user: " + res.message);
+    }
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    alert("Unexpected error while adding user.");
+  });
+});
+
+function toggleUserDelete(userId, newStatus, button) {
+  const confirmMsg = newStatus === 1 
+    ? "Are you sure you want to delete this user?" 
+    : "Do you want to restore this user?";
+  
+  if (!confirm(confirmMsg)) return;
+
+  fetch('toggle_user_delete.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, is_deleted: newStatus })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      if (newStatus === 1) {
+        // Change to Revert (Green)
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-success');
+        button.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Revert';
+        button.setAttribute('onclick', `toggleUserDelete(${userId}, 0, this)`);
+      } else {
+        // Change back to Delete (Red)
+        button.classList.remove('btn-success');
+        button.classList.add('btn-danger');
+        button.innerHTML = '<i class="bi bi-trash"></i> Delete';
+        button.setAttribute('onclick', `toggleUserDelete(${userId}, 1, this)`);
+      }
+    } else {
+      alert("❌ Error: " + data.message);
+    }
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    alert("Unexpected error while toggling user delete state.");
+  });
+}
+
 </script>
 
+<?php $template->footer($config); ?>
 </body>
 </html>
-<?php
-// Note: Document end template calls should typically go here
-$template->footer($config);
-?>
