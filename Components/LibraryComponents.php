@@ -418,7 +418,7 @@ class PendingReservationsSection extends DbBackedSection
                        r.reservation_date
                 FROM reservations r
                 JOIN users u ON u.user_id = r.user_id
-                JOIN books b ON b.book_id = r.book_id
+                JOIN books b ON b.book_id = r.book_i
                 WHERE r.status = 'active'
                 ORDER BY r.reservation_date DESC
                 LIMIT 20";
@@ -513,37 +513,33 @@ class LibrarianTemplate
     public function navArea(array $config): void
     {
         ?>
-        <nav class="navbar navbar-expand-lg header-nav" style="background-color:#0d6efd;">
-            <div class="container-fluid">
-                <a class="navbar-brand text-white" href="#"><?= htmlspecialchars($config['Website_Name'] ?? 'StorySphere') ?></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link text-white" href="librarian_dashboard.php">Dashboard</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="booksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Books</a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="booksDropdown">
-                                                                <li><a class="dropdown-item" href="librarian_books_crud.php">Manage Books</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="borrowingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Borrowings</a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="borrowingsDropdown">
-                                <li><a class="dropdown-item" href="librarian_borrowings.php">Recent Borrowings</a></li>
-                                <li><a class="dropdown-item" href="librarian_overdue_list.php">Overdue</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item"><a class="nav-link text-white" href="librarian_reservations.php">Reservations</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="librarian_fines_manage.php">Fines</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="librarian_reports.php">Reports</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="librarian_profile.php">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <!-- Use user-style navbar structure for consistent styling -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <div class="navbar">
+          <div class="logo">
+            <h2><i class="fa-solid fa-book"></i> <?= htmlspecialchars($config['Website_Name'] ?? 'StorySphere') ?></h2>
+            <p>Library Management</p>
+          </div>
+
+          <ul class="nav-links">
+            <li><a href="librarian_dashboard.php"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+            <li><a href="librarian_books_crud.php"><i class="fa-solid fa-book-open"></i> Books</a></li>
+            <li><a href="librarian_borrowings.php"><i class="fa-solid fa-book-reader"></i> Borrowings</a></li>
+            <li><a href="librarian_fines_manage.php"><i class="fa-solid fa-coins"></i> Fines</a></li>
+            <li><a href="librarian_reservations.php"><i class="fa-solid fa-calendar-plus"></i> Reservations</a></li>
+            <li><a href="librarian_reports.php"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
+            <li><a href="librarian_profile.php"><i class="fa-solid fa-user"></i> Profile</a></li>
+          </ul>
+
+                    <div class="cta">
+                        <a class="btn btn-info btn-modern text-white" href="librarian_reservations.php"><i class="fa-solid fa-calendar-plus"></i> Manage Reservations</a>
+                    </div>
+
+          <div class="logout">
+            <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          </div>
+        </div>
         <?php
     }
 
@@ -564,6 +560,12 @@ class LibrarianTemplate
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
             <!-- DataTables local CSS (ensure placed after base styles) -->
             <link rel="stylesheet" href="../Datatables/3.1.1.css">
+            <?php
+            // Include user styles for navbar consistency (cache-busted by filemtime)
+            $userCssPath = __DIR__ . '/../user_style.css';
+            $userCssVer = file_exists($userCssPath) ? filemtime($userCssPath) : time();
+            ?>
+            <link rel="stylesheet" href="../user_style.css?v=<?= $userCssVer ?>">
             <style>
                 body { background-color: #f8f9fa; min-height: 100vh; display: flex; flex-direction: column; }
                 .content { padding: 20px; flex: 1; }
