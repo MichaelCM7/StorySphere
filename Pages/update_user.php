@@ -39,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $input['user_id'] ?? null;
     $name = $input['name'] ?? null;
     $email = $input['email'] ?? null;
+    $phone_number = $input['phone_number'] ?? null;
     $role = $input['role'] ?? null;
 
-    if (!$user_id || !$name || !$email || !$role) {
-        echo json_encode(['success' => false, 'message' => 'Missing required fields']);
-        exit;
+    if (!$user_id || !$name || !$email || !$role || !$phone_number) {
+    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    exit;
     }
 
     // ✅ Step 4: Split full name into first & last (optional)
@@ -53,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ✅ Step 5: Prepare statement
     $stmt = $conn->prepare("
-        UPDATE users 
-        SET first_name = ?, last_name = ?, email = ?, 
-            role_id = (SELECT role_id FROM roles WHERE role_name = ?) 
-        WHERE user_id = ?
+    UPDATE users 
+    SET first_name = ?, last_name = ?, email = ?, phone_number = ?, 
+        role_id = (SELECT role_id FROM roles WHERE role_name = ?) 
+    WHERE user_id = ?
     ");
 
     if (!$stmt) {
@@ -64,8 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt->bind_param("ssssi", $first_name, $last_name, $email, $role, $user_id);
-
+    $stmt->bind_param("sssssi", $first_name, $last_name, $email, $phone_number, $role, $user_id);
+    
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
     } else {
