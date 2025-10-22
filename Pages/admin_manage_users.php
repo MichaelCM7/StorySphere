@@ -496,6 +496,27 @@ function toggleUserDelete(userId, newStatus, button) {
   });
 }
 
+// Initialize DataTables on the user table
+$(document).ready(function() {
+    $('#all-users-table').DataTable({
+        "columnDefs": [
+            { "orderable": false, "targets": 5 } // Actions column should not be sortable
+        ],
+        "pageLength": 10,
+        "lengthMenu": [5, 10, 25, 50, 100],
+        "language": {
+            "search": "Search:",
+            "lengthMenu": "Show _MENU_ entries",
+            "info": "Showing _START_ to _END_ of _TOTAL_ users",
+            "infoEmpty": "No users available",
+            "paginate": {
+                "previous": "<",
+                "next": ">"
+            }
+        }
+    });
+});
+
 </script>
 
 <?php $template->footer($config); ?>
