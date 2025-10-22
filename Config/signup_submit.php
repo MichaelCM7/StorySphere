@@ -13,7 +13,9 @@
   require_once __DIR__ . '/../ExternalLibraries/PHPMailer/vendor/autoload.php';
   require_once 'otpcall.php';
 
-  SESSION_start();
+  if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
   // echo "<pre>";
   // print_r($_POST);
@@ -25,13 +27,21 @@
   $_SESSION['userrole'] = $_POST["user-role"];
   $_SESSION['phonenumber'] = $_POST["phonenumber"];
   $_SESSION['email'] = $_POST["email"];
-  $_SESSION['password'] = $_POST["password"];
-  $_SESSION['cpassword'] = $_POST["Cpassword"];
+  $password = $_POST["password"] ?? '';
+  $cpassword = $_POST["Cpassword"] ?? '';
+
+  // Validate passwords match
+if ($_SESSION['password'] !== $_SESSION['cpassword']) {
+    echo "Error: Passwords do not match.";
+    exit();
+}
+
 
   if (!filter_var($_SESSION['email'], FILTER_VALIDATE_EMAIL)) {
     echo "Error: The email address is not valid.";
     exit(); 
   }
+
   $password = $_POST["password"];
   $hashed_password = password_hash($_SESSION['password'], PASSWORD_BCRYPT);
 
@@ -47,13 +57,25 @@
     error_log("Invalid user role selected: " . $_SESSION['userrole']);
   }
 
+  $check_stmt = $connection->prepare("SELECT user_id FROM users WHERE email = ?");
+$check_stmt->bind_param("s", $_SESSION['email']);
+$check_stmt->execute();
+$check_stmt->store_result();
+
+if ($check_stmt->num_rows > 0) {
+    echo "<script>alert('Error: An account with this email already exists.'); window.history.back();</script>";
+    $check_stmt->close();
+    exit();
+}
+$check_stmt->close();
+
   //Insert data into database
   $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, phone_number, email, password_hash, role_id) VALUES (?, ?, ?, ?, ?, ?)");
   $stmt->bind_param("sssssi", $_SESSION['firstname'], $_SESSION['lastname'], $_SESSION['phonenumber'], $_SESSION['email'], $hashed_password, $role_id);
   if ($stmt->execute()) {
-      echo "Data inserted successfully!";
+      //echo "Data inserted successfully!";
   } else {
-      echo "Error inserting data: " . $stmt->error;
+     echo "<script>alert('Error inserting data: " . addslashes($stmt->error) . "'); window.history.back();</script>";
   }
   $stmt->close();
 
@@ -74,7 +96,7 @@
     header("Location: ../Pages/mailVerify.php");
     exit;
   } else {
-    echo "Sign Up Failed";
+    //echo "Sign Up Failed";
     header("Location: ../Pages/error.php");
     exit();
   }

@@ -40,7 +40,7 @@ $client = [
 
 // send mail
 require 'mail.php';
-// $mailer = new Mail();$mailer->sendMail($config, $client);
+ $mailer = new Mail();$mailer->sendMail($config, $client);
 // Redirect back to verification page
 
 if (!$mailer->sendMail($config, $client)) {

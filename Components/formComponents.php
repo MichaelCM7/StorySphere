@@ -154,6 +154,24 @@ class formComponents {
     </form>
 <?php
 }
+public function forgotOtpForm() {
+    ?>
+<form method="post" action="../Config/forgotDirect.php">
+        <h2 class="text-center mb-4">Verify OTP</h2>
 
+        <div class="form-group">
+            <label for="otp">Enter The OTP Sent To Your Email</label>
+            <input type="text" class="form-control" id="otp" name="otp" minlength="6" maxlength="6" required>
+            <small class="text-danger" id="otpError"></small>
+        </div>
+
+        <p class="text-center mt-3">
+            <a href="../Config/resendotp.php">Resend OTP</a>
+        </p>
+
+        <button type="submit" class="btn btn-primary btn-block">Verify OTP</button>
+    </form>
+    <?php
+}
 }
 ?>

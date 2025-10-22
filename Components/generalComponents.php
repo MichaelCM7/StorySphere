@@ -29,6 +29,9 @@ class generalComponents {
                         else if (basename($_SERVER['PHP_SELF']) == 'resetPassword.php' || basename($_SERVER['PHP_SELF']) == 'ResetPassword.php') {
                             $form_components->newPassForm();
                         }
+                        else if (basename($_SERVER['PHP_SELF']) == 'forgotOtp.php' || basename($_SERVER['PHP_SELF']) == 'ForgotOtp.php') {
+                            $form_components->forgotOtpForm();
+                        }
                          else {
                             $form_components->forgotPassForm();
                         }

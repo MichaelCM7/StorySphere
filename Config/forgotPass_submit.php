@@ -23,6 +23,7 @@ try {
         // Generate and store OTP
         $otp = otpGenerator();
         $_SESSION['otp'] = $otp;
+        $_SESSION['otp_created'] = time();
         $_SESSION['reset_email'] = $email; 
 
         // Use non-personalized client config
@@ -30,19 +31,22 @@ try {
 
         $mail = new Mail();
         if ($mail->sendMail($config, $client)) {
-            header ("Location: ../Pages/mailVerify.php");
+            header ("Location: ../Pages/forgotOtp.php");
             exit();
 
         } else {
-            echo "Failed to send OTP. Please try again later.";
+           echo "<script>alert(' Fail to send OTP .Please try again later '); window.history.back();</script>";
+        exit();
         }
 
     } else {
-        echo "No account found with that email.";
+        echo "<script>alert(' No account found with that email.'); window.history.back();</script>";
+        exit();
+    
     }
 
     $stmt->close();
-    $conn->close();
+    $connection->close();
 
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
