@@ -525,7 +525,6 @@ class LibrarianTemplate
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="booksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Books</a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="booksDropdown">
-                                <li><a class="dropdown-item" href="librarian_books_crud.php">Books List</a></li>
                                                                 <li><a class="dropdown-item" href="librarian_books_crud.php">Manage Books</a></li>
                             </ul>
                         </li>
