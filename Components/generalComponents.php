@@ -26,7 +26,7 @@ class generalComponents {
                         } else if (basename($_SERVER['PHP_SELF']) == 'mailVerify.php' || basename($_SERVER['PHP_SELF']) == 'MailVerify.php') {
                             $form_components->mailVerifyForm();
                         }
-                        else if (basename($_SERVER['PHP_SELF']) == 'resetPassword.php' || basename($_SERVER['PHP_SELF']) == 'ResetPassword.php') {
+                        else if (basename($_SERVER['PHP_SELF']) == 'newPass.php' || basename($_SERVER['PHP_SELF']) == 'newPass.php') {
                             $form_components->newPassForm();
                         }
                         else if (basename($_SERVER['PHP_SELF']) == 'forgotOtp.php' || basename($_SERVER['PHP_SELF']) == 'ForgotOtp.php') {
