@@ -1,107 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/IAP/styles/tables.css">
-<title>Sign In Submit</title>
-</head>
-<body>
 <?php
-// Start the session at the very beginning
 session_start();
 
-// Ensure this file exists and handles your database connection setup.
-require 'dbconnection.php';
+require_once 'dbconnection.php';
 
-// Define constants for better readability and maintainability
-define('ROLE_ADMIN', 1);
-define('ROLE_LIBRARIAN', 2);
-define('ROLE_USER', 3);
-
-// Function for secure redirection
 function redirect_to(string $path): void {
     header("Location: " . $path);
     exit;
 }
 
-// Get and sanitize input
-$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
-$password = $_POST["password"];
-
-// Check if email and password were provided and connection is valid
-if (empty($email) || empty($password) || !isset($connection)) {
-    $_SESSION['login_error'] = "Missing email or password.";
-    redirect_to("../Pages/login_page.php");
+if (!isset($_POST['email'], $_POST['password'])) {
+    $_SESSION['login_error'] = "Email and password are required.";
+    redirect_to("../Pages/signIn.php");
 }
 
-// Prepare the statement to fetch the hashed password AND role_id (merged)
+$email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+$password = $_POST["password"]; 
+
+if (empty($email) || empty($password) || !isset($connection)) {
+    $_SESSION['login_error'] = "Missing email or password.";
+    redirect_to("../Pages/signIn.php");
+}
+
 $sql = "SELECT password_hash, role_id FROM users WHERE email = ? LIMIT 1;";
 $stmt = $connection->prepare($sql);
 
 if (!$stmt) {
-    // Handle prepare error
-    $connection->close();
     $_SESSION['login_error'] = "A server error occurred during authentication.";
-    redirect_to("../Pages/login_page.php");
+    redirect_to("../Pages/signIn.php");
 }
 
-$stmt->bind_param("s", $email); 
-$stmt->execute();
+$stmt->bind_param("s", $email);
+
+if (!$stmt->execute()) {
+    $_SESSION['login_error'] = "A database error occurred. Please try again.";
+    redirect_to("../Pages/signIn.php");
+}
+
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Check if exactly one user was found
 if ($user) {
     $stored_hash = $user["password_hash"];
     $storedRole = (int)$user["role_id"];
 
     // Verify the submitted password against the stored hash
     if (password_verify($password, $stored_hash)) {
-        
-        session_regenerate_id(true); // Prevents Session Fixation
-        
-        // Session setup
+
+        // Prevent session fixation attacks
+        session_regenerate_id(true);
+
+        // Store session details
         $_SESSION['logged_in'] = true;
         $_SESSION['user_email'] = $email;
         $_SESSION['role_id'] = $storedRole;
 
-        // role navigation using constants
         switch ($storedRole) {
-            case ROLE_ADMIN:
+            case 1:
                 redirect_to("../Pages/admin_dashboard.php");
                 break;
-            case ROLE_LIBRARIAN:
+            case 2:
                 redirect_to("../Pages/librarian_dashboard.php");
                 break;
-            case ROLE_USER:
+            case 3:
                 redirect_to("../Pages/user_index_dashboard.php");
                 break;
             default:
-                // Unknown role, fail safe
                 session_unset();
-                session_destroy();
                 $_SESSION['login_error'] = "Login failed. Unknown user role.";
                 redirect_to("../Pages/signIn.php");
                 break;
         }
 
     } else {
-        // Generic failure message for security
         $_SESSION['login_error'] = "Invalid email or password.";
-        redirect_to("../Pages/login_page.php");
-    } 
+        redirect_to("../Pages/signIn.php");
+    }
+
 } else {
-    // Generic failure message for security
     $_SESSION['login_error'] = "Invalid email or password.";
-    redirect_to("../Pages/login_page.php");
+    redirect_to("../Pages/signIn.php");
 }
 
 $stmt->close();
 $connection->close();
 
-// This line will only be reached on execution failure before redirect.
-exit;
 ?>
-</body>
-</html>
