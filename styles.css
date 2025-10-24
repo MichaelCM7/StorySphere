@@ -8,7 +8,7 @@
   --card-bg: #ffffff;
   --border: #e5e7eb;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --nav-bg: #ffffffcc;
+  --nav-bg: #0d6efd;
 }
 
 * {
@@ -83,11 +83,11 @@ header p {
 }
 
 .navbar .nav-link {
-  color: var(--text);
+  color: var(--bg);
   text-decoration: none;
   padding: 0.5rem 0.6rem;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  transition:  0.2s ease;
 }
 
 .navbar .nav-link:hover {

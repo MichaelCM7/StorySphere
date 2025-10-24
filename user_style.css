@@ -20,6 +20,10 @@ main {
   margin: 0 auto;
 }
 
+.logo-text{
+  color: var(--card-bg);
+}
+
 /* ---------- Navbar ---------- */
 .navbar {
   background: #007bff; /* lighter, modern blue */
@@ -60,7 +64,7 @@ main {
 }
 
 .navbar .nav-links a {
-  color: rgb(0,0,255);
+  color: rgb(255,255,255);
   text-decoration: none;
   font-size: 0.95rem;
   display: flex;
