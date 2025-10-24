@@ -82,7 +82,7 @@ if ($user) {
                 session_unset();
                 session_destroy();
                 $_SESSION['login_error'] = "Login failed. Unknown user role.";
-                redirect_to("../Pages/login_page.php");
+                redirect_to("../Pages/signIn.php");
                 break;
         }
 
