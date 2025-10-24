@@ -7,10 +7,11 @@ class WelcomePage
     private string $title ="StorySphere";
 
     public function RenderPage():void{
-     $this->Head();
+        $this->Head();
         echo "<body>\n";
         echo "    <div class=\"container\">\n";
-        $this->Navbar();
+        // Use the minimal public navbar for the index page
+        include __DIR__ . '/../Components/public_navbar.php';
         $this->Header();
         echo "        <main>\n";
         $this->Search();
@@ -33,24 +34,14 @@ class WelcomePage
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$this->title}</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="assets/css/search.css">
+    <link rel="stylesheet" href="../user_style.css">
+    <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 </head>
 HTML;
     }
     
-    private function Navbar():void{
-        echo <<<HTML
-        <nav class="navbar">
-            <a class="brand" href="Welcome.php">{$this->title}</a>
-            <div class="links">
-                <a href="Login.php" class="nav-link">Log in</a>
-                <a href="Signup.php" class="btn">Sign up</a>
-            </div>
-        </nav>
-HTML;
-    }
+    // Navbar is now included from user_navbar.php
     
    private function Header():void{
         echo <<<HTML

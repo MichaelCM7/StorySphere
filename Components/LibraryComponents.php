@@ -603,15 +603,8 @@ class LibrarianTemplate
             <li><a href="librarian_reservations.php"><i class="fa-solid fa-calendar-plus"></i> Reservations</a></li>
             <li><a href="librarian_reports.php"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
             <li><a href="librarian_profile.php"><i class="fa-solid fa-user"></i> Profile</a></li>
-          </ul>
-
-                    <div class="cta">
-                        <a class="btn btn-info btn-modern text-white" href="librarian_reservations.php"><i class="fa-solid fa-calendar-plus"></i> Manage Reservations</a>
-                    </div>
-
-          <div class="logout">
-            <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-          </div>
+            <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>          
+        </ul>
         </div>
         <?php
     }
