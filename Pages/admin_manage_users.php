@@ -32,14 +32,15 @@ if (!isset($connection) || $connection->connect_error) {
     // - fines table: user_id, amount, is_paid (1 for paid, 0 for unpaid)
     $sql = "SELECT 
                 u.user_id, 
-                u.combined_username AS name, -- Alias combined_username to 'name' for compatibility
+                u.combined_username AS name,
                 u.email, 
-                r.role_name AS role, -- Alias the joined role name to 'role' for compatibility
+                u.phone_number,
+                r.role_name AS role,
                 COALESCE(SUM(CASE WHEN f.payment_status = 'unpaid' THEN f.fine_amount ELSE 0 END), 0) AS total_fine
             FROM users u
-            INNER JOIN roles r ON u.role_id = r.role_id -- Updated foreign key name from roleid to role_id based on schema
+            INNER JOIN roles r ON u.role_id = r.role_id
             LEFT JOIN fines f ON u.user_id = f.user_id
-            GROUP BY u.user_id, u.combined_username, u.email, r.role_name
+            GROUP BY u.user_id, u.combined_username, u.email, u.phone_number, r.role_name
             ORDER BY u.user_id DESC";
 
     $result = $connection->query($sql);
@@ -86,6 +87,7 @@ if (!isset($connection) || $connection->connect_error) {
                     <td>' . $userId . '</td>
                     <td>' . htmlspecialchars($row['name']) . '</td>
                     <td>' . htmlspecialchars($row['email']) . '</td>
+                    <td>' . htmlspecialchars($row['phone_number'] ?? '') . '</td>
                     <td>' . $role . '</td>
                     <td>' . $fine_display . '</td>
                     <td>' . $actions . '</td>
@@ -256,6 +258,9 @@ if (!isset($connection) || $connection->connect_error) {
             opacity: 0.6;
         }
 
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+
         /* Responsive Layout (for smaller screens) */
         @media screen and (max-width: 768px) {
             .card {
@@ -267,7 +272,6 @@ if (!isset($connection) || $connection->connect_error) {
             }
         }
     </style>
-
 </head>
 <body>
 
@@ -293,6 +297,10 @@ if (!isset($connection) || $connection->connect_error) {
             <input type="email" id="edit_email" class="form-control" required>
           </div>
           <div class="mb-3">
+            <label for="edit_phone" class="form-label">Phone Number</label>
+            <input type="text" id="edit_phone" class="form-control" required>
+          </div>
+          <div class="mb-3">
             <label for="edit_role" class="form-label">Role</label>
             <select id="edit_role" class="form-select" required>
                 <option value="Administrator">Administrator</option>
@@ -303,13 +311,13 @@ if (!isset($connection) || $connection->connect_error) {
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark">Save Changes</button>
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Changes</button>
         </div>
       </form>
     </div>
   </div>
-</div>
+</div>  
 
 <div class="container">
   <div class="row mb-4">
@@ -318,12 +326,18 @@ if (!isset($connection) || $connection->connect_error) {
         <h5>Add New User</h5>
         <form id="addUserForm">
           <div class="mb-2">
-            <input type="text" id="add_name" class="form-control" placeholder="Full Name" required>
+            <input type="text" id="add_first_name" class="form-control" placeholder="First Name" required>
+          </div>
+          <div class="mb-2">
+            <input type="text" id="add_last_name" class="form-control" placeholder="Last Name" required>
           </div>
           <div class="mb-2">
             <input type="email" id="add_email" class="form-control" placeholder="Email Address" required>
           </div>
           <div class="mb-2">
+            <input type="text" id="add_phone" class="form-control" placeholder="Phone Number" required>
+          </div>
+                <div class="mb-2">
             <select id="add_role" class="form-control" required>
               <option value="">Select Role</option>
               <option value="Administrator">Administrator</option>
@@ -331,7 +345,7 @@ if (!isset($connection) || $connection->connect_error) {
               <option value="Member">Member</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-dark btn-modern">Add User</button>
+          <button type="submit" class="btn btn-success">Add User</button>
         </form>
       </div>
     </div>
@@ -350,6 +364,7 @@ if (!isset($connection) || $connection->connect_error) {
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Phone</th>
                                 <th>Role</th>
                                 <th>Fines</th>
                                 <th>Actions</th>
@@ -376,11 +391,13 @@ function editUser(userId) {
     let row = document.querySelector(`#all-users-table button[onclick="editUser(${userId})"]`).closest("tr");
     let name = row.children[1].textContent.trim();
     let email = row.children[2].textContent.trim();
-    let role = row.children[3].textContent.trim();
+    let phone = row.children[3].textContent.trim();
+    let role = row.children[4].textContent.trim();
 
     $('#edit_user_id').val(userId);
     $('#edit_name').val(name);
     $('#edit_email').val(email);
+    $('#edit_phone').val(phone);
     $('#edit_role').val(role);
 
     editModal.show();
@@ -393,6 +410,7 @@ $('#editUserForm').on('submit', function(e) {
     let name = $('#edit_name').val();
     let email = $('#edit_email').val();
     let role = $('#edit_role').val();
+    let phone_number = $('#edit_phone').val();
 
     console.log("Sending:", { user_id: userId, name: name, email: email, role: role });
 
@@ -402,10 +420,11 @@ $('#editUserForm').on('submit', function(e) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            user_id: userId,
-            name: name,
-            email: email,
-            role: role
+          user_id: userId,
+          name: name,
+          email: email,
+          phone_number: phone_number,
+          role: role
         })
     })
     .then(response => response.json())
@@ -428,11 +447,13 @@ $('#editUserForm').on('submit', function(e) {
 $('#addUserForm').on('submit', function(e) {
   e.preventDefault();
 
-  let name = $('#add_name').val();
+  let first_name = $('#add_first_name').val();
+  let last_name = $('#add_last_name').val();
   let email = $('#add_email').val();
   let role = $('#add_role').val();
+  let phone_number = $('#add_phone').val();
 
-  if (!name || !email || !role) {
+  if (!first_name || !last_name || !email || !role || !phone_number) {
     alert("Please fill all fields.");
     return;
   }
@@ -440,16 +461,15 @@ $('#addUserForm').on('submit', function(e) {
   fetch('add_user.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: name, email: email, role: role })
+    body: JSON.stringify({ first_name, last_name, email, role, phone_number })
   })
   .then(response => response.json())
   .then(res => {
-    console.log("Add User Response:", res);
     if (res.success) {
-      alert("✅ User added successfully!");
-      location.reload(); // reloads to show new user in table
+      alert("User added successfully!");
+      location.reload();
     } else {
-      alert("❌ Failed to add user: " + res.message);
+      alert("Failed to add user: " + res.message);
     }
   })
   .catch(err => {

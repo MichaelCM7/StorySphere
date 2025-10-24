@@ -18,49 +18,22 @@ class generalComponents {
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="card shadow-sm p-4">
-                        <?php
-                        // If $type is passed, use it directly
-                        if (!empty($type)) {
-                            switch ($type) {
-                                case 'signIn':
-                                    $form_components->signInForm();
-                                    break;
-                                case 'signUp':
-                                    $form_components->signUpForm();
-                                    break;
-                                case 'mailVerify':
-                                    $form_components->mailVerifyForm();
-                                    break;
-                                case 'forgotPass':
-                                    $form_components->forgotPassForm();
-                                    break;
-                                case 'forgotOtp':
-                                    $form_components->forgotOtpForm();
-                                    break;
-                                case 'newPass':
-                                    $form_components->newPassForm();
-                                    break;
-                                default:
-                                    $form_components->signInForm();
-                                    break;
-                            }
-                        } 
-                        // Otherwise detect automatically from filename
-                        else {
-                            $page = strtolower(basename($_SERVER['PHP_SELF']));
-                            if ($page === 'signin.php') {
-                                $form_components->signInForm();
-                            } elseif ($page === 'signup.php') {
-                                $form_components->signUpForm();
-                            } elseif ($page === 'mailverify.php') {
-                                $form_components->mailVerifyForm();
-                            } elseif ($page === 'forgototp.php') {
-                                $form_components->forgotOtpForm();
-                            } elseif ($page === 'resetpassword.php' || $page === 'newpass.php') {
-                                $form_components->newPassForm();
-                            } else {
-                                $form_components->forgotPassForm();
-                            }
+                       <?php 
+                        if (basename($_SERVER['PHP_SELF']) == 'signIn.php' || basename($_SERVER['PHP_SELF']) == 'SignIn.php') {
+                            $form_components->signInForm();
+                        } else if(basename($_SERVER['PHP_SELF']) == 'signUp.php' || basename($_SERVER['PHP_SELF']) == 'SignUp.php') {
+                            $form_components->signUpForm();
+                        } else if (basename($_SERVER['PHP_SELF']) == 'mailVerify.php' || basename($_SERVER['PHP_SELF']) == 'MailVerify.php') {
+                            $form_components->mailVerifyForm();
+                        }
+                        else if (basename($_SERVER['PHP_SELF']) == 'newPass.php' || basename($_SERVER['PHP_SELF']) == 'newPass.php') {
+                            $form_components->newPassForm();
+                        }
+                        else if (basename($_SERVER['PHP_SELF']) == 'forgotOtp.php' || basename($_SERVER['PHP_SELF']) == 'ForgotOtp.php') {
+                            $form_components->forgotOtpForm();
+                        }
+                         else {
+                            $form_components->forgotPassForm();
                         }
                         ?>
                     </div>

@@ -29,10 +29,24 @@ if ($res = $connection->query($sql)) {
     $res->free();
 }
 
+// Overdue books: borrowing_records not returned and due_date < today
+$overdue = [];
+$sql = "SELECT br.borrowing_id, b.title AS book_title, CONCAT(u.first_name,' ',u.last_name) AS member_name, 
+               br.issue_date, br.due_date, DATEDIFF(CURDATE(), br.due_date) AS days_overdue
+        FROM borrowing_records br
+        JOIN books b ON b.book_id = br.book_id
+        JOIN users u ON u.user_id = br.user_id
+        WHERE br.return_date IS NULL AND br.due_date < CURDATE()
+        ORDER BY br.due_date ASC";
+if ($res = $connection->query($sql)) {
+    while ($r = $res->fetch_assoc()) { $overdue[] = $r; }
+    $res->free();
+}
+
 ?>
 
 <div class="row mb-4">
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="card card-modern p-4">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -43,7 +57,7 @@ if ($res = $connection->query($sql)) {
             </div>
         </div>
     </div>
-    <div class="col-md-6 mb-3">
+    <div class="col-md-4 mb-3">
         <div class="card card-modern p-4">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
@@ -54,9 +68,20 @@ if ($res = $connection->query($sql)) {
             </div>
         </div>
     </div>
+    <div class="col-md-4 mb-3">
+        <div class="card card-modern p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6>Overdue Books</h6>
+                    <h3 class="text-danger"><?= number_format(count($overdue)) ?></h3>
+                </div>
+                <i class="bi bi-exclamation-circle" style="font-size:2rem; color: #dc3545;"></i>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="card card-modern">
+<div class="card card-modern mb-4">
     <div class="card-body">
         <h5 class="mb-3">Pending Return Books</h5>
         <?php if (count($pending) === 0): ?>
@@ -88,6 +113,40 @@ if ($res = $connection->query($sql)) {
     </div>
 </div>
 
+<div class="card card-modern">
+    <div class="card-body">
+        <h5 class="mb-3">Overdue Books</h5>
+        <?php if (count($overdue) === 0): ?>
+            <p class="text-muted mb-0">No overdue books.</p>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Book</th>
+                            <th>Borrowed</th>
+                            <th>Due Date</th>
+                            <th>Days Overdue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($overdue as $row): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['member_name']) ?></td>
+                                <td><?= htmlspecialchars($row['book_title']) ?></td>
+                                <td><?= date('M d, Y', strtotime($row['issue_date'])) ?></td>
+                                <td><?= date('M d, Y', strtotime($row['due_date'])) ?></td>
+                                <td><span class="badge text-bg-danger"><?= (int)$row['days_overdue'] ?></span></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
+
 <?php $template->footer($config); ?>
 <!-- DataTables assets (local) -->
 <link rel="stylesheet" href="../Datatables/3.1.1.css">
@@ -98,6 +157,17 @@ if ($res = $connection->query($sql)) {
 <!-- Optional extensions (JSZip/pdfmake) - used for export buttons if needed -->
 <script src="../Datatables/dependancy1.js"></script>
 <script src="../Datatables/dependancy2.js"></script>
+<script>
+$(document).ready(function() {
+    $('.table').DataTable({
+        pageLength: 10,
+        order: [[3, 'asc']], // Sort by due date by default
+        language: {
+            emptyTable: "No records found"
+        }
+    });
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     if (window.jQuery) console.log('jQuery version', window.jQuery.fn && window.jQuery.fn.jquery);

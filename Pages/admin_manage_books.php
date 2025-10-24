@@ -143,8 +143,8 @@ if (!isset($connection) || $connection->connect_error) {
           <div class="mb-3"><label class="form-label">ISBN</label><input type="text" id="edit_isbn" class="form-control" required></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-dark">Save Changes</button>
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Changes</button>
         </div>
       </form>
     </div>
@@ -173,7 +173,7 @@ if (!isset($connection) || $connection->connect_error) {
               <option value="8">Poetry</option>
             </select>
           </div>
-          <button type="submit" class="btn btn-dark">Add Book</button>
+          <button type="submit" class="btn btn-success">Add Book</button>
         </form>
       </div>
     </div>
@@ -212,11 +212,33 @@ let editModal = new bootstrap.Modal(document.getElementById('editBookModal'));
 
 function editBook(bookId) {
     let row = document.querySelector(`#all-books-table button[onclick="editBook(${bookId})"]`).closest("tr");
+
+    // Extract plain text from the row
+    let title = row.children[1].textContent.trim();
+    let author = row.children[2].textContent.trim();
+    let categoryName = row.children[3].textContent.trim();
+    let isbn = row.children[4].textContent.trim();
+
+    // Fill form fields
     $('#edit_book_id').val(bookId);
-    $('#edit_title').val(row.children[1].textContent.trim());
-    $('#edit_author').val(row.children[2].textContent.trim());
-    $('#edit_category').val(row.children[3].textContent.trim());
-    $('#edit_isbn').val(row.children[4].textContent.trim());
+    $('#edit_title').val(title);
+    $('#edit_author').val(author);
+    $('#edit_isbn').val(isbn);
+
+    // Match category name to its option text (case-insensitive)
+    let matched = false;
+    $('#edit_category option').each(function () {
+        if ($(this).text().trim().toLowerCase() === categoryName.toLowerCase()) {
+            $('#edit_category').val($(this).val());
+            matched = true;
+            return false; // stop loop
+        }
+    });
+
+    // If no match found, reset select
+    if (!matched) $('#edit_category').val('');
+
+    // Finally show modal
     editModal.show();
 }
 
