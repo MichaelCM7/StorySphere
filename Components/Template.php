@@ -38,7 +38,7 @@ class Template {
         <head>
             <title>
                 <?php   
-                echo $pageTitle ? $pageTitle . " – " . $config['Website_Name'] : $config['Website_Name']; 
+                echo $pageTitle ? $pageTitle . " - " . $config['Website_Name'] : $config['Website_Name']; 
                 ?>
             </title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

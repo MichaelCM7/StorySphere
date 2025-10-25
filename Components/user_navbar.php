@@ -13,7 +13,7 @@
 <div class="navbar">
   <div class="logo">
     <h2><i class="fa-solid fa-book"></i> StorySphere</h2>
-    <p>Book Management</p>
+    <p style="color: white;">Book Management</p>
   </div>
 
   <ul class="nav-links">
