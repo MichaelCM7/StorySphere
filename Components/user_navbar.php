@@ -25,6 +25,6 @@
   </ul>
 
   <div class="logout">
-    <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    <a href="../Pages/signIn.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
   </div>
 </div>
