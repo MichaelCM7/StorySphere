@@ -1,5 +1,4 @@
 <?php
-// CRITICAL: Start the session to access login data and set messages
 session_start();
 
 // Ensure this is a POST request and the user is logged in (session email must exist)
@@ -34,7 +33,6 @@ if (!isset($connection) || $connection->connect_error) {
 // Get the form type to route the request
 $form_type = $_POST['form_type'] ?? '';
 
-// --- Handle Personal Information Update (Matches form_type=personal) ---
 if ($form_type === 'personal') {
     // Retrieving separate first_name, last_name, and phone_number as per DB schema
     $first_name = trim($_POST['first_name'] ?? '');
@@ -100,7 +98,6 @@ if ($form_type === 'personal') {
     }
     $stmt->close();
 
-// --- Handle Password Update (Matches form_type=password) ---
 } elseif ($form_type === 'password') {
     $new_password = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';

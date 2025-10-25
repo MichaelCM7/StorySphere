@@ -6,18 +6,11 @@ error_reporting(E_ALL);
 include '../Components/auth_guard.php'; // This should start the session and set $user
 require "../Config/dbconnection.php"; 
 
-// FIX: Safely access $_SESSION['user_email'] (Corrected variable name)
-//echo"<h1 style='z-index: 10000;'>".($_SESSION['user_email'] ?? 'No Session Email Set')."</h1>";
-
-// --- Data Fetching Logic (MODIFIED) ---
-// Get email from the authenticated user context/session
-// Assuming $user is populated by auth_guard.php, which should now look for 'user_email' in the session, 
-// or directly use $_SESSION['user_email'] if $user is not fully populated yet.
 $user_email = $_SESSION['user_email'] ?? ($user['email'] ?? null); 
 $profile = [
-    'first_name' => '', // Initialized to empty string
-    'last_name' => '',  // Initialized to empty string
-    'email' => '',      // Initialized to empty string
+    'first_name' => '', 
+    'last_name' => '',  
+    'email' => '',      
     'phone_number' => ''
 ];
 
@@ -28,7 +21,6 @@ unset($_SESSION['success_message'], $_SESSION['error_message']);
 
 
 if ($user_email && isset($connection) && $connection->connect_error === null) {
-    // Correctly selecting the columns from your database schema
     $sql = "SELECT first_name, last_name, phone_number, email FROM users WHERE email = ? AND is_deleted = 0 LIMIT 1";
     $stmt = $connection->prepare($sql);
     
@@ -40,8 +32,7 @@ if ($user_email && isset($connection) && $connection->connect_error === null) {
         if ($result->num_rows === 1) {
             $db_data = $result->fetch_assoc();
             
-            // Sanitize and assign data using correct keys (populating the fields)
-            // Using empty string (?? '') as fallback for null database values
+            // Sanitize and assign data using correct keys
             $profile['first_name'] = htmlspecialchars($db_data['first_name'] ?? '');
             $profile['last_name'] = htmlspecialchars($db_data['last_name'] ?? '');
             $profile['phone_number'] = htmlspecialchars($db_data['phone_number'] ?? '');
@@ -51,7 +42,7 @@ if ($user_email && isset($connection) && $connection->connect_error === null) {
     }
     $connection->close();
 }
-// --- End Data Fetching Logic ---
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
