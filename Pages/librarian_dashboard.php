@@ -28,6 +28,9 @@ foreach ($sections as $section) {
     echo '  <div class="card-body">';
     echo '    <h5 class="card-title mb-3">' . htmlspecialchars($section->getTitle()) . '</h5>';
     echo          $section->renderContent();
+    if ($section instanceof BorrowingsSection) {
+        echo '<div class="text-end mt-3"><a href="librarian_borrowings.php" class="btn btn-dark btn-modern">View All Borrowings</a></div>';
+    }
     echo '  </div>';
     echo '</div>';
 }

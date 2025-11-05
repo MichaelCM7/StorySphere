@@ -164,6 +164,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         $action = 'list';
+    } elseif ($action === 'mark_damaged') {
+        if ($id > 0) {
+            try {
+                $stmt = $connection->prepare('UPDATE books SET book_condition = ? WHERE book_id = ?');
+                $condition = 'poor';
+                $stmt->bind_param('si', $condition, $id);
+                $stmt->execute();
+                $stmt->close();
+                $success = 'Book marked as damaged.';
+            } catch (Throwable $e) {
+                $errors[] = 'Failed to mark book as damaged: ' . $e->getMessage();
+            }
+        }
+        $action = 'list'; // stay on list view
     }
 }
 
@@ -270,47 +284,19 @@ if ($action === 'create' || $action === 'edit') {
 
 // List view
 if ($action === 'list') {
-    $search = trim($_GET['q'] ?? '');
     $sql = "SELECT b.book_id, b.isbn, b.title, COALESCE(a.author_name,'') AS author, COALESCE(c.category_name,'') AS category, b.total_copies, b.available_copies
             FROM books b
             LEFT JOIN authors a ON a.author_id = b.author_id
-            LEFT JOIN categories c ON c.category_id = b.category_id";
-    $params = [];
-    $types = '';
-    if ($search !== '') {
-        $sql .= " WHERE b.title LIKE ? OR a.author_name LIKE ? OR b.isbn LIKE ?";
-        $like = '%' . $search . '%';
-        $params = [$like, $like, $like];
-        $types = 'sss';
-    }
-    $sql .= " ORDER BY b.book_id DESC LIMIT 100";
+            LEFT JOIN categories c ON c.category_id = b.category_id ORDER BY b.book_id DESC";
 
     $data = [];
-    if ($types) {
-        $stmt = $connection->prepare($sql);
-        $stmt->bind_param($types, ...$params);
-        $stmt->execute();
-        $res = $stmt->get_result();
+    if ($res = $connection->query($sql)) {
         while ($row = $res->fetch_assoc()) { $data[] = $row; }
-        $stmt->close();
-    } else {
-        if ($res = $connection->query($sql)) {
-            while ($row = $res->fetch_assoc()) { $data[] = $row; }
-            $res->free();
-        }
+        $res->free();
     }
     ?>
-    <div class="card card-modern mb-3">
-        <div class="card-body">
-            <form class="row g-2" method="get">
-                <div class="col-md-6">
-                    <input type="text" name="q" class="form-control" placeholder="Search title, author, ISBN" value="<?= htmlspecialchars($search) ?>">
-                </div>
-                <div class="col-md-6 text-end">
-                    <a href="librarian_books_crud.php?action=create" class="btn btn-success btn-modern"><i class="bi bi-plus-circle me-1"></i> Add Book</a>
-                </div>
-            </form>
-        </div>
+    <div class="text-end mb-3">
+        <a href="librarian_books_crud.php?action=create" class="btn btn-success btn-modern"><i class="bi bi-plus-circle me-1"></i> Add Book</a>
     </div>
 
     <div class="table-responsive">
@@ -343,6 +329,11 @@ if ($action === 'list') {
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= (int)$book['book_id'] ?>">
                                 <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                            <form method="post" onsubmit="return confirm('Mark this book as damaged?');">
+                                <input type="hidden" name="action" value="mark_damaged">
+                                <input type="hidden" name="id" value="<?= (int)$book['book_id'] ?>">
+                                <button type="submit" class="btn btn-sm btn-secondary" title="Mark as Damaged"><i class="bi bi-bandaid"></i></button>
                             </form>
                         </td>
                     </tr>

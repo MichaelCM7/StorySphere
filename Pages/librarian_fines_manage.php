@@ -15,7 +15,8 @@ if (!in_array($tab, $allowedTabs, true)) { $tab = 'unpaid'; }
 $success = '';
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['fine_id'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
     $fineId = (int)$_POST['fine_id'];
     $action = $_POST['action'];
     if ($fineId > 0 && in_array($action, ['mark_paid','mark_waived'], true)) {
@@ -28,6 +29,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['fin
             $success = 'Fine updated successfully.';
         } catch (Throwable $e) {
             $error = 'Failed to update fine: ' . $e->getMessage();
+        }
+    } elseif ($action === 'create_fine') {
+        $userId = (int)($_POST['user_id'] ?? 0);
+        $amount = (float)($_POST['fine_amount'] ?? 0);
+        $bookId = (int)($_POST['book_id'] ?? 0) ?: null; // Can be null
+        $reason = trim($_POST['fine_reason'] ?? '');
+
+        if ($userId > 0 && $amount > 0 && $reason !== '') {
+            try {
+                // Find the latest borrowing_id for this user and book if provided
+                $borrowingId = null;
+                if ($bookId !== null) {
+                    $res = $connection->query("SELECT borrowing_id FROM borrowing_records WHERE user_id = $userId AND book_id = $bookId ORDER BY issue_date DESC LIMIT 1");
+                    if ($res && $row = $res->fetch_assoc()) { $borrowingId = (int)$row['borrowing_id']; }
+                }
+
+                $stmt = $connection->prepare('INSERT INTO fines (user_id, borrowing_id, fine_amount, fine_reason, payment_status) VALUES (?, ?, ?, ?, "unpaid")');
+                $stmt->bind_param('iids', $userId, $borrowingId, $amount, $reason);
+                $stmt->execute();
+                $stmt->close();
+                $success = 'Fine created successfully.';
+            } catch (Throwable $e) {
+                $error = 'Failed to create fine: ' . $e->getMessage();
+            }
+        } else {
+            $error = 'Please select a member and provide a valid amount and reason.';
         }
     }
 }
@@ -43,6 +70,26 @@ function fetchFines(mysqli $connection, string $status): array {
     return $rows;
 }
 
+// Fetch members for the create fine form
+$members = [];
+$sql = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS member_name FROM users WHERE role_id = 3 AND is_deleted = 0 ORDER BY first_name, last_name";
+if ($res = $connection->query($sql)) {
+    while ($row = $res->fetch_assoc()) {
+        $members[] = $row;
+    }
+    $res->free();
+}
+
+// Fetch all books for the create fine form
+$allBooks = [];
+$sql_books = "SELECT book_id, title FROM books WHERE is_deleted = 0 ORDER BY title";
+if ($res = $connection->query($sql_books)) {
+    while ($row = $res->fetch_assoc()) {
+        $allBooks[] = $row;
+    }
+    $res->free();
+}
+
 $unpaid = $tab === 'unpaid' ? fetchFines($connection, 'unpaid') : [];
 $paid = $tab === 'paid' ? fetchFines($connection, 'paid') : [];
 $waived = $tab === 'waived' ? fetchFines($connection, 'waived') : [];
@@ -55,6 +102,44 @@ $waived = $tab === 'waived' ? fetchFines($connection, 'waived') : [];
 <?php if ($error): ?>
 <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
+
+<div class="card card-modern mb-4">
+    <div class="card-body">
+        <h5 class="mb-3">Create New Fine</h5>
+        <form method="post">
+            <input type="hidden" name="action" value="create_fine">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Select Member</label>
+                    <select name="user_id" class="form-select" required>
+                        <option value="">-- Choose a member --</option>
+                        <?php foreach ($members as $member): ?>
+                            <option value="<?= (int)$member['user_id'] ?>"><?= htmlspecialchars($member['member_name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Select Book (Optional)</label>
+                    <select name="book_id" class="form-select">
+                        <option value="">-- No specific book --</option>
+                        <?php foreach ($allBooks as $book): ?>
+                            <option value="<?= (int)$book['book_id'] ?>"><?= htmlspecialchars($book['title']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Fine Amount (KES)</label>
+                    <input type="number" name="fine_amount" class="form-control" step="0.01" min="0.01" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Reason</label>
+                    <input type="text" name="fine_reason" class="form-control" placeholder="e.g., Damaged book cover" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-modern mt-3"><i class="bi bi-plus-circle me-1"></i> Add Fine</button>
+        </form>
+    </div>
+</div>
 
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item"><a class="nav-link <?= $tab==='unpaid'?'active':'' ?>" href="?tab=unpaid">Unpaid</a></li>

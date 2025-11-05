@@ -30,6 +30,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['return_borrowing_id']
     }
 }
 
+// Handle mark as lost action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_lost_borrowing_id'])) {
+    $borrowingId = (int)$_POST['mark_lost_borrowing_id'];
+    $bookId = (int)$_POST['book_id'];
+    $userId = (int)$_POST['user_id'];
+
+    if ($borrowingId > 0 && $bookId > 0 && $userId > 0) {
+        try {
+            // Call stored procedure MarkAsLost
+            $stmt = $connection->prepare('CALL MarkAsLost(?, ?, ?)');
+            $stmt->bind_param('iii', $borrowingId, $userId, $bookId);
+            $stmt->execute();
+            $stmt->close();
+            $success = 'Book marked as lost and fine issued.';
+        } catch (Throwable $e) {
+            $error = 'Failed to mark book as lost: ' . $e->getMessage();
+        }
+    }
+}
+
+// Handle extend action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['extend_borrowing_id'])) {
+    $borrowingId = (int)$_POST['extend_borrowing_id'];
+    if ($borrowingId > 0) {
+        try {
+            // Extend due date by 7 days
+            $stmt = $connection->prepare('UPDATE borrowing_records SET due_date = DATE_ADD(due_date, INTERVAL 7 DAY) WHERE borrowing_id = ?');
+            $stmt->bind_param('i', $borrowingId);
+            $stmt->execute();
+            $stmt->close();
+            $success = 'Due date extended successfully.';
+        } catch (Throwable $e) {
+            $error = 'Failed to extend due date: ' . $e->getMessage();
+        }
+    }
+}
+
 // Fetch overdue borrowings
 $rows = [];
 $sql = "SELECT br.borrowing_id,
@@ -90,6 +127,20 @@ if ($res = $connection->query($sql)) {
                                         <i class="bi bi-arrow-counterclockwise"></i> Return
                                     </button>
                                 </form>
+                                <form method="post" class="d-inline" onsubmit="return confirm('Mark this book as lost? This will create a fine for the user.');">
+                                    <input type="hidden" name="mark_lost_borrowing_id" value="<?= (int)$row['borrowing_id'] ?>">
+                                    <input type="hidden" name="user_id" value="<?= (int)$row['user_id'] ?>">
+                                    <input type="hidden" name="book_id" value="<?= (int)$row['book_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger ms-1" title="Mark as Lost">
+                                        <i class="bi bi-x-circle"></i> Lost
+                                    </button>
+                                </form>
+                                <form method="post" class="d-inline" onsubmit="return confirm('Extend the due date by 7 days?');">
+                                    <input type="hidden" name="extend_borrowing_id" value="<?= (int)$row['borrowing_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-info ms-1" title="Extend Due Date">
+                                        <i class="bi bi-calendar-plus"></i> Extend
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -101,26 +152,3 @@ if ($res = $connection->query($sql)) {
 </div>
 
 <?php $template->footer($config); ?>
-<!-- DataTables assets (local) -->
-<link rel="stylesheet" href="../Datatables/3.1.1.css">
-<!-- jQuery (required) -->
-<script src="../Datatables/3.7.1.js"></script>
-<!-- DataTables core -->
-<script src="../Datatables/2.1.4.js"></script>
-<!-- Optional extensions (JSZip/pdfmake) - used for export buttons if needed -->
-<script src="../Datatables/dependancy1.js"></script>
-<script src="../Datatables/dependancy2.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    if (window.jQuery) console.log('jQuery version', window.jQuery.fn && window.jQuery.fn.jquery);
-    if (window.jQuery) console.log('DataTable plugin present:', !!(window.jQuery && window.jQuery.fn && window.jQuery.fn.DataTable));
-    if (window.jQuery && window.jQuery.fn && window.jQuery.fn.DataTable) {
-        window.jQuery('table').each(function(i, el){
-            if (!el.id) el.id = 'datatable-overdue-' + i;
-            if (!window.jQuery.fn.DataTable.isDataTable('#' + el.id)) {
-                window.jQuery('#' + el.id).DataTable({ pageLength: 25, order: [[3, 'asc']] });
-            }
-        });
-    }
-});
-</script>

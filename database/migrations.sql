@@ -553,3 +553,21 @@ INSERT INTO `ratings` (`book_id`, `rating`, `rating_count`) VALUES
 (18, 4.4, 1200),
 (20, 4.1, 900),
 (26, 4.8, 4800);
+
+--
+-- =================================================================
+-- SCHEMA UPDATES FOR EXISTING DATABASES (Run if you get 'is_deleted' errors)
+-- These commands add the soft-delete column to tables that might be missing it.
+-- =================================================================
+--
+
+ALTER TABLE `users` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `books` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `authors` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `categories` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `borrowing_records` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `fines` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `reservations` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `book_statuses` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `roles` ADD `is_deleted` TINYINT(1) DEFAULT 0;
+ALTER TABLE `ratings` ADD `is_deleted` TINYINT(1) DEFAULT 0;

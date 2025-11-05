@@ -201,7 +201,7 @@ class BorrowingsSection extends DbBackedSection
 
     public function getTitle(): string
     {
-        return 'Recent Borrowings';
+        return 'Borrowings';
     }
 
     public function renderContent(): string
@@ -244,11 +244,24 @@ class BorrowingsSection extends DbBackedSection
                             </td>
                             <td>
                                 <?php if ($borrowing['status'] === 'borrowed' || $borrowing['status'] === 'overdue'): ?>
-                                    <button onclick="returnBook(<?= (int)$borrowing['borrowing_id'] ?>, this)" 
-                                            class="btn btn-sm btn-warning" 
-                                            title="Return">
-                                        <i class="bi bi-arrow-counterclockwise"></i> Return
-                                    </button>
+                                    <form method="post" class="d-inline" onsubmit="return confirm('Process return for this borrowing?');">
+                                        <input type="hidden" name="return_borrowing_id" value="<?= (int)$borrowing['borrowing_id'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-warning" title="Return Book"><i class="bi bi-arrow-counterclockwise"></i> Return</button>
+                                    </form>
+                                    <form method="post" class="d-inline" onsubmit="return confirm('Mark this book as lost? This will create a fine for the user.');">
+                                        <input type="hidden" name="mark_lost_borrowing_id" value="<?= (int)$borrowing['borrowing_id'] ?>">
+                                        <input type="hidden" name="user_id" value="<?= (int)$borrowing['user_id'] ?>">
+                                        <input type="hidden" name="book_id" value="<?= (int)$borrowing['book_id'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger ms-1" title="Mark as Lost">
+                                            <i class="bi bi-x-circle"></i> Lost
+                                        </button>
+                                    </form>
+                                    <form method="post" class="d-inline" onsubmit="return confirm('Extend the due date by 7 days?');">
+                                        <input type="hidden" name="extend_borrowing_id" value="<?= (int)$borrowing['borrowing_id'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-info ms-1" title="Extend Due Date">
+                                            <i class="bi bi-calendar-plus"></i> Extend
+                                        </button>
+                                    </form>
                                 <?php elseif ($borrowing['status'] === 'returned'): ?>
                                     <button onclick="revertReturn(<?= (int)$borrowing['borrowing_id'] ?>, this)" 
                                             class="btn btn-sm btn-info" 
@@ -261,9 +274,6 @@ class BorrowingsSection extends DbBackedSection
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
-        <div class="text-end mt-3">
-            <a href="librarian_borrowings.php" class="btn btn-dark btn-modern">View All Borrowings</a>
         </div>
         <script>
         function returnBook(borrowingId, button) {
@@ -338,7 +348,7 @@ class BorrowingsSection extends DbBackedSection
     {
         $db = $this->getDb();
         $data = [];
-        $sql = "SELECT br.borrowing_id,
+        $sql = "SELECT br.borrowing_id, br.user_id, br.book_id,
                        CONCAT(u.first_name, ' ', u.last_name) AS member_name,
                        b.title AS book_title,
                        br.issue_date AS borrow_date,
@@ -354,12 +364,14 @@ class BorrowingsSection extends DbBackedSection
             while ($row = $res->fetch_assoc()) {
                 $status = 'borrowed';
                 if (!empty($row['return_date'])) {
-                    $status = 'returned';
+                    $status = (int)$row['book_status_id'] === 4 ? 'lost' : 'returned';
                 } elseif ((int)$row['book_status_id'] === 3 || (isset($row['due_date']) && strtotime($row['due_date']) < strtotime(date('Y-m-d')))) {
                     $status = 'overdue';
                 }
                 $data[] = [
                     'borrowing_id' => (int)$row['borrowing_id'],
+                    'user_id' => (int)$row['user_id'],
+                    'book_id' => (int)$row['book_id'],
                     'member_name' => $row['member_name'] ?? '',
                     'book_title' => $row['book_title'] ?? '',
                     'borrow_date' => $row['borrow_date'],
@@ -406,6 +418,12 @@ class OverdueAlertsSection extends DbBackedSection
                             <small class="text-danger">Overdue by <?= (int)$book['days_overdue'] ?> days</small>
                         </div>
                         <span class="badge text-bg-danger"><?= (int)$book['days_overdue'] ?> days</span>
+                        <form method="post" class="d-inline" onsubmit="return confirm('Extend the due date by 7 days?');">
+                            <input type="hidden" name="extend_borrowing_id" value="<?= (int)$book['borrowing_id'] ?>">
+                            <button type="submit" class="btn btn-sm btn-info ms-1" title="Extend Due Date">
+                                <i class="bi bi-calendar-plus"></i> Extend
+                            </button>
+                        </form>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -423,7 +441,8 @@ class OverdueAlertsSection extends DbBackedSection
         $data = [];
         $sql = "SELECT b.title AS book_title,
                        CONCAT(u.first_name,' ',u.last_name) AS member_name,
-                       GREATEST(DATEDIFF(CURDATE(), br.due_date), 0) AS days_overdue
+                       GREATEST(DATEDIFF(CURDATE(), br.due_date), 0) AS days_overdue,
+                       br.borrowing_id
                 FROM borrowing_records br
                 JOIN users u ON u.user_id = br.user_id
                 JOIN books b ON b.book_id = br.book_id
@@ -436,6 +455,7 @@ class OverdueAlertsSection extends DbBackedSection
                     'book_title' => $row['book_title'] ?? '',
                     'member_name' => $row['member_name'] ?? '',
                     'days_overdue' => (int)($row['days_overdue'] ?? 0),
+                    'borrowing_id' => (int)($row['borrowing_id'] ?? 0),
                 ];
             }
             $res->free();
@@ -625,6 +645,8 @@ class LibrarianTemplate
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
             <!-- DataTables local CSS (ensure placed after base styles) -->
+            <!-- DataTables Buttons CSS -->
+            <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.min.css">
             <link rel="stylesheet" href="../Datatables/3.1.1.css">
             <?php
             // Include user styles for navbar consistency (cache-busted by filemtime)
@@ -637,7 +659,7 @@ class LibrarianTemplate
                 .content { padding: 20px; flex: 1; }
                 .footer { background-color: #fff; padding: 15px 20px; border-top: 1px solid #ddd; text-align: center; margin-top: auto; }
                 .card-modern { border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s ease; }
-                .card-modern:hover { transform: translateY(-5px); }
+                .card-modern:hover { /* transform: translateY(-5px); */ }
                 .btn-modern { border-radius: 8px; padding: 10px 20px; font-weight: 500; }
             </style>
         </head>
@@ -646,11 +668,14 @@ class LibrarianTemplate
         <?php
     }
 
-    public function hero(string $title): void
+    public function hero(string $title, ?string $subtitle = null): void
     {
         ?>
         <div class="mb-4">
             <h2><?= htmlspecialchars($title) ?></h2>
+            <?php if ($subtitle): ?>
+                <p class="text-muted"><?= htmlspecialchars($subtitle) ?></p>
+            <?php endif; ?>
         </div>
         <?php
     }
@@ -673,53 +698,62 @@ class LibrarianTemplate
         <script src="../Datatables/dependacy6.js"></script>
 
         <script>
-        // Robust initializer: wait for jQuery and DataTables, then initialize tables inside cards
-        (function() {
-            function initDataTablesOnce() {
-                if (!(window.jQuery && window.jQuery.fn && window.jQuery.fn.DataTable)) {
-                    return false;
-                }
-                try {
-                    var $ = window.jQuery;
-                    // initialize any table that isn't already a DataTable
-                    $('table').each(function(i, tbl) {
-                        var $tbl = $(tbl);
-                        if (!$tbl.attr('id')) {
-                            $tbl.attr('id', 'tbl-auto-' + i + '-' + Date.now());
-                        }
-                        if (!$.fn.DataTable.isDataTable($tbl)) {
-                            $tbl.DataTable({ pageLength: 25, lengthChange: false, responsive: true });
-                        }
-                    });
-                    console.log('DataTables initialized on page tables');
-                    return true;
-                } catch (e) {
-                    console.warn('Error initializing DataTables', e);
-                    return false;
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!(window.jQuery && window.jQuery.fn && window.jQuery.fn.DataTable)) {
+                console.error('DataTables or jQuery not loaded.');
+                return;
             }
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    var tries = 0;
-                    (function waitForDt(){
-                        if (initDataTablesOnce() || ++tries > 50) return;
-                        setTimeout(waitForDt, 150);
-                    })();
-                });
-            } else {
-                var tries = 0;
-                (function waitForDt(){
-                    if (initDataTablesOnce() || ++tries > 50) return;
-                    setTimeout(waitForDt, 150);
-                })();
-            }
-        })();
+            const currentPage = window.location.pathname.split('/').pop();
+            const isReportPage = currentPage === 'librarian_reports.php';
+
+            $('table').each(function(i, el) {
+                var $tbl = $(el);
+                if ($.fn.DataTable.isDataTable($tbl)) {
+                    return;
+                }
+
+                if (isReportPage) {
+                    // Advanced initialization for reports page with export buttons
+                    let title = 'Librarian Report';
+                    let h5 = $tbl.closest('.card-body').find('h5').first();
+                    if (h5.length) {
+                        title = h5.text();
+                    }
+
+                    $tbl.DataTable({
+                        pageLength: 25,
+                        dom: 'Bfrtip', // This enables the Buttons
+                        buttons: [
+                            { extend: 'csv', title: title },
+                            { extend: 'excel', title: title },
+                            { extend: 'pdf', title: title }
+                        ]
+                    });
+                } else {
+                    // Standard initialization for all other pages
+                    $tbl.DataTable({
+                        pageLength: 25,
+                        lengthChange: false,
+                        responsive: true
+                    });
+                }
+            });
+        });
         </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        </body>
-        </html>
-        <?php
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var addBorrowingModal = document.getElementById('addBorrowingModal');
+                        if (addBorrowingModal) {
+                            addBorrowingModal.addEventListener('show.bs.modal', function () {
+                                document.body.classList.remove('modal-open');
+                            });
+                        }
+                    });
+                </script>
+            </body>
+        </html>        <?php
     }
 }
