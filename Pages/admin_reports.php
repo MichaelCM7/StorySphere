@@ -30,59 +30,13 @@ if ($result_total_penalty && $row = $result_total_penalty->fetch_assoc()) {
     $total_penalty_kes = number_format((float)$row['total_penalty'], 2, '.', ',');
 }
 
-
-// --- 3. Fetch Detailed Report Table Data ---
-
-// Query 3: Detailed Report on Active/Overdue Loans and Outstanding Fines
-$sql_detailed_report = "
-    SELECT
-        br.book_id,
-        b.title,
-        CONCAT(u.first_name, ' ', u.last_name) AS borrower_name,
-        bs.status_name AS borrowing_status,
-        COALESCE(SUM(f.fine_amount), 0) AS outstanding_fine
-    FROM borrowing_records br
-    JOIN books b ON br.book_id = b.book_id
-    JOIN users u ON br.user_id = u.user_id
-    JOIN book_statuses bs ON br.book_status_id = bs.book_status_id
-    LEFT JOIN fines f ON br.borrowing_id = f.borrowing_id AND f.payment_status = 'unpaid'
-    WHERE br.book_status_id IN (1, 3) -- 1: Currently Borrowed, 3: Overdue
-    GROUP BY br.borrowing_id, br.book_id, b.title, borrower_name, borrowing_status
-    ORDER BY br.due_date ASC
-";
-
-$result_report = $connection->query($sql_detailed_report);
-
-if ($result_report && $result_report->num_rows > 0) {
-    while($row = $result_report->fetch_assoc()) {
-        $fine_display = number_format((float)$row['outstanding_fine'], 2, '.', ',');
-        
-        // Determine status styling
-        $status_class = '';
-        if ($row['borrowing_status'] === 'Overdue') {
-            $status_class = 'text-danger fw-bold';
-        } elseif ($row['borrowing_status'] === 'Currently Borrowed') {
-            $status_class = 'text-success';
-        }
-        
-        // Build the table row
-        $report_table_rows_html .= '
-            <tr>
-                <td>' . htmlspecialchars($row['book_id']) . '</td>
-                <td>' . htmlspecialchars($row['title']) . '</td>
-                <td>' . htmlspecialchars($row['borrower_name']) . '</td>
-                <td>' . htmlspecialchars($fine_display) . '</td>
-                <td class="' . $status_class . '">' . htmlspecialchars($row['borrowing_status']) . '</td>
-            </tr>
-        ';
-    }
-} else {
-    // Fallback for no data found.
-    $report_table_rows_html = '<tr><td colspan="' . $COLSPAN_COUNT . '" style="text-align: center;">No active or overdue borrowing records found.</td></tr>';
+// Query 3: Total Revenue from Paid Fines
+$sql_total_revenue = "SELECT COALESCE(SUM(fine_amount), 0) AS total_revenue FROM fines WHERE payment_status = 'paid'";
+$result_total_revenue = $connection->query($sql_total_revenue);
+$total_revenue_kes = "0.00";
+if ($result_total_revenue && $row = $result_total_revenue->fetch_assoc()) {
+    $total_revenue_kes = number_format((float)$row['total_revenue'], 2, '.', ',');
 }
-
-// Close the database connection
-$connection->close();
 
 // Template setup (assuming $config is defined in constants.php)
 $template = new Template();
@@ -231,12 +185,10 @@ $template->hero('Library Reports');
 <body>
 
 <div class="container">
-    
-    <!-- Metric Cards -->
+
     <div class="row mb-4">
-        
         <!-- Total Books Card -->
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
             <div class="card metric-card p-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
@@ -247,74 +199,193 @@ $template->hero('Library Reports');
                 </div>
             </div>
         </div>
-        
-        <!-- Total Penalty Card -->
-        <div class="col-md-6 mb-3">
+
+        <!-- Total Outstanding Fine -->
+        <div class="col-md-4 mb-3">
             <div class="card metric-card p-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <h6>Total Outstanding Fine (KES)</h6>
+                        <h6>Total Outstanding Fine</h6>
                         <h3 id="totalPenalty">KES <?php echo $total_penalty_kes; ?></h3>
                     </div>
                     <i class="bi bi-cash-stack"></i>
                 </div>
             </div>
         </div>
+
+        <!-- ✅ Total Revenue from Paid Fines -->
+        <div class="col-md-4 mb-3">
+            <div class="card metric-card p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6>Total Revenue from Paid Fines</h6>
+                        <h3 id="totalRevenue">KES <?php echo $total_revenue_kes; ?></h3>
+                    </div>
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Detailed Reports Table -->
+    <!-- 1️⃣ Frequently Borrowed Books -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card card-modern p-4">
-                <h5>Detailed Borrowing Reports (Active & Overdue)</h5>
-                
+            <div class="card p-4">
+                <h5>Most Frequently Borrowed Books</h5>
                 <div class="table-responsive">
-                    <table id="detailed-reports-table" class="display">
+                    <table id="frequentBooksTable" class="display nowrap" style="width:100%">
                         <thead class="table-dark">
                             <tr>
                                 <th>Book ID</th>
                                 <th>Title</th>
-                                <th>Borrowed By</th>
-                                <th>Fine (KES)</th>
-                                <th>Status</th>
+                                <th>Times Borrowed</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Data populated from PHP Query 3 -->
-                            <?php echo $report_table_rows_html; ?>
+                            <?php
+                            $sql_freq = "
+                                SELECT b.book_id, b.title, COUNT(br.borrowing_id) AS times_borrowed
+                                FROM borrowing_records br
+                                JOIN books b ON br.book_id = b.book_id
+                                GROUP BY b.book_id, b.title
+                                ORDER BY times_borrowed DESC
+                                LIMIT 10;
+                            ";
+                            $result_freq = $connection->query($sql_freq);
+                            if ($result_freq && $result_freq->num_rows > 0) {
+                                while($row = $result_freq->fetch_assoc()) {
+                                    echo '<tr>
+                                        <td>'.htmlspecialchars($row['book_id']).'</td>
+                                        <td>'.htmlspecialchars($row['title']).'</td>
+                                        <td>'.htmlspecialchars($row['times_borrowed']).'</td>
+                                    </tr>';
+                                }
+                            } else {
+                                echo '<tr><td colspan="3" style="text-align:center;">No borrowing data found.</td></tr>';
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 2️⃣ Total Revenue from Fines -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card p-4">
+                <h5>Total Revenue from Paid Fines</h5>
+                <div class="table-responsive">
+                    <table id="revenueTable" class="display nowrap" style="width:100%">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fine ID</th>
+                                <th>User</th>
+                                <th>Book Title</th>
+                                <th>Fine Amount (KES)</th>
+                                <th>Payment Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $sql_revenue = "
+                                SELECT 
+                                    f.fine_id,
+                                    CONCAT(u.first_name, ' ', u.last_name) AS user_name,
+                                    b.title,
+                                    f.fine_amount,
+                                    f.created_at AS payment_date
+                                FROM fines f
+                                JOIN users u ON f.user_id = u.user_id
+                                JOIN borrowing_records br ON f.borrowing_id = br.borrowing_id
+                                JOIN books b ON br.book_id = b.book_id
+                                WHERE f.payment_status = 'paid'
+                                ORDER BY f.created_at DESC;
+                            ";
+                            $result_revenue = $connection->query($sql_revenue);
+                            if ($result_revenue && $result_revenue->num_rows > 0) {
+                                while($row = $result_revenue->fetch_assoc()) {
+                                    echo '<tr>
+                                        <td>'.htmlspecialchars($row['fine_id']).'</td>
+                                        <td>'.htmlspecialchars($row['user_name']).'</td>
+                                        <td>'.htmlspecialchars($row['title']).'</td>
+                                        <td>'.number_format((float)$row['fine_amount'], 2).'</td>
+                                        <td>'.htmlspecialchars($row['payment_date']).'</td>
+                                    </tr>';
+                                }
+                            } else {
+                                echo '<tr><td colspan="5" style="text-align:center;">No paid fines found.</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
+ <!-- ✅ Make sure jQuery loads FIRST -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- ✅ DataTables core -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.4/js/dataTables.min.js"></script>
+
+<!-- ✅ DataTables Buttons dependencies -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.dataTables.min.css">
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+
+<!-- ✅ Initialize DataTables for all tables -->
 <script>
-    // DataTables Initialization Script
-    $(document).ready(function() {
-        // Initialize DataTables for the detailed report table
-        $('#detailed-reports-table').DataTable({
-            "paging": true,        
-            "searching": true,     
-            "ordering": true,      
-            "info": true,          
-            "responsive": true,
-            "columnDefs": [
-                // Set default order: Status (Overdue first) then Fine
-                { "orderData": [ 4, 3 ], "targets": 0 } 
-            ],
-            // Custom message if table is empty
-            "language": {
-                "emptyTable": "No active or overdue borrowing records found in the system."
-            }
-        });
+$(document).ready(function() {
+    // Table 2: Frequently Borrowed Books
+    $('#frequentBooksTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            { extend: 'copyHtml5', title: 'Frequently Borrowed Books' },
+            { extend: 'csvHtml5', title: 'Frequently Borrowed Books' },
+            { extend: 'excelHtml5', title: 'Frequently Borrowed Books' },
+            { extend: 'pdfHtml5', title: 'Frequently Borrowed Books' },
+            { extend: 'print', title: 'Frequently Borrowed Books' }
+        ],
+        pageLength: 5,
+        ordering: true,
+        language: { emptyTable: 'No borrowing data available.' }
     });
+
+    // Table 3: Total Revenue from Fines
+    $('#revenueTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            { extend: 'copyHtml5', title: 'Revenue from Fines' },
+            { extend: 'csvHtml5', title: 'Revenue from Fines' },
+            { extend: 'excelHtml5', title: 'Revenue from Fines' },
+            { extend: 'pdfHtml5', title: 'Revenue from Fines' },
+            { extend: 'print', title: 'Revenue from Fines' }
+        ],
+        pageLength: 5,
+        ordering: true,
+        language: { emptyTable: 'No revenue records available.' }
+    });
+});
+</script>
 </script>
 
 </body>
 </html>
 
+
 <?php
+// Close the database connection
+$connection->close();
+
 $template->footer($config);
 ?>
