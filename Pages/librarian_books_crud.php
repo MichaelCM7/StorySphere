@@ -156,11 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($hasRefs) {
                 $errors[] = 'Cannot delete book with existing borrowing or reservation records.';
             } else {
-                $stmt = $connection->prepare('DELETE FROM books WHERE book_id = ?');
+                $stmt = $connection->prepare('UPDATE books SET is_deleted = 1 WHERE book_id = ?');
                 $stmt->bind_param('i', $id);
                 $stmt->execute();
                 $stmt->close();
-                $success = 'Book deleted successfully.';
+                $success = 'Book deactivated successfully.';
             }
         }
         $action = 'list';
@@ -287,7 +287,9 @@ if ($action === 'list') {
     $sql = "SELECT b.book_id, b.isbn, b.title, COALESCE(a.author_name,'') AS author, COALESCE(c.category_name,'') AS category, b.total_copies, b.available_copies
             FROM books b
             LEFT JOIN authors a ON a.author_id = b.author_id
-            LEFT JOIN categories c ON c.category_id = b.category_id ORDER BY b.book_id DESC";
+            LEFT JOIN categories c ON c.category_id = b.category_id
+            WHERE b.is_deleted = 0
+            ORDER BY b.book_id DESC";
 
     $data = [];
     if ($res = $connection->query($sql)) {
