@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require "../Config/constants.php";
 require "../Components/Template.php";
 require "../Config/dbconnection.php";
@@ -125,7 +127,6 @@ $template->hero('Dashboard');
 
 </body>
 </html>
-
 
 <?php
 $template->footer($config);

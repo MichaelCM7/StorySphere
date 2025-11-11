@@ -1,5 +1,12 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+echo "<pre>";
+echo "POST Data:\n";
+print_r($_POST);
+echo "</pre>";
 
 require_once 'dbconnection.php';
 

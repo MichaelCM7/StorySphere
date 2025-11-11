@@ -31,7 +31,7 @@
   $cpassword = $_POST["Cpassword"] ?? '';
 
   // Validate passwords match
-if ($_SESSION['password'] !== $_SESSION['cpassword']) {
+if ($password !== $cpassword) {
     echo "Error: Passwords do not match.";
     exit();
 }
@@ -43,7 +43,7 @@ if ($_SESSION['password'] !== $_SESSION['cpassword']) {
   }
 
   $password = $_POST["password"];
-  $hashed_password = password_hash($_SESSION['password'], PASSWORD_BCRYPT);
+  $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
   $role_id = 3; // Initialize default role as 'Reader' (ID 3, based on your schema)
 

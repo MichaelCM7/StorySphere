@@ -14,5 +14,4 @@ if ($connection->connect_error) {
     
     $connection = null;
 }
-
 ?>
