@@ -4,30 +4,88 @@ class Template {
     // Navigation bar
     public function navArea($config) {
         ?>
-        <nav class="navbar navbar-expand-lg header-nav" style="background-color:#0d6efd;position:fixed; z-index:100;width:100%;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white" href="#"><?php echo $config['Website_Name']; ?></a>
-            <!-- hamburger menu button for small screens -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link text-white" href="admin_dashboard.php">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="admin_manage_books.php">Manage Books</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="admin_manage_users.php">Manage Users</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="admin_reports.php">Reports</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="admin_profile.php">Profile</a></li>
-                <li class="nav-item">
-                    <a class="btn btn-danger btn-modern ms-2" href="logout.php">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </a>
-                </li>
-            </ul>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .navbar-custom {
+            background: #1a56db ;
+            padding: 10px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0px;
+            color: white;
+        }
+
+        .navbar-logo-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-logo-subtitle {
+            color: white;
+            font-size: 13px;
+            font-weight: 400;
+            margin-top: 0;
+            margin-left: 0;
+        }
+
+        .navbar-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar-links li a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .navbar-links li a:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-links li a i {
+            font-size: 18px;
+        }
+    </style>
+
+    <div class="navbar-custom">
+        <div class="navbar-logo">
+            <div class="navbar-logo-top">
+                <i class="fa-solid fa-book"></i>
+                <?= htmlspecialchars($config['Website_Name'] ?? 'StorySphere') ?>
             </div>
+            <div class="navbar-logo-subtitle">Admin Management</div>
         </div>
-        </nav>
-        <?php
+
+        <ul class="navbar-links">
+            <li><a href="admin_dashboard.php"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+            <li><a href="admin_manage_books.php"><i class="fa-solid fa-book"></i> Books</a></li>
+            <li><a href="admin_manage_users.php"><i class="fa-solid fa-book-reader"></i> Manage Users</a></li>
+            <li><a href="admin_reports.php"><i class="fa-solid fa-chart-line"></i> Reports</a></li>
+            <li><a href="admin_profile.php"><i class="fa-solid fa-user"></i> Profile</a></li>
+            <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+        </ul>
+    </div>
+    <?php
     }
 
     // Start main document

@@ -190,10 +190,10 @@ if (empty($availableBooks) && $q !== '') {
       <?php else: ?>
         <div class="book-grid">
           <?php foreach($availableBooks as $book): ?>
-            <div class="book-card">
+            <div class="book-card" style="display: flex; flex-direction: column;">
               <?php if (!empty($book['cover_image_url']) || !empty($book['thumbnail'])): ?>
-                <div class="book-thumb">
-                  <img src="<?= htmlspecialchars(!empty($book['cover_image_url']) ? $book['cover_image_url'] : ($book['thumbnail'] ?? '')) ?>" alt="<?= htmlspecialchars($book['title']) ?> cover" />
+                <div class="book-thumb" style="display: flex; justify-content: centre">
+                  <img style="width: 100%;" src="<?= htmlspecialchars(!empty($book['cover_image_url']) ? $book['cover_image_url'] : ($book['thumbnail'] ?? '')) ?>" alt="<?= htmlspecialchars($book['title']) ?> cover" />
                 </div>
               <?php endif; ?>
               <div class="book-meta">
