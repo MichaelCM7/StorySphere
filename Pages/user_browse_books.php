@@ -199,13 +199,13 @@ if (empty($availableBooks) && $q !== '') {
               <div class="book-meta">
                 <h3><?= htmlspecialchars($book['title']); ?> <?php if (($book['source'] ?? '') === 'google'): ?><small class="external-badge">External</small><?php endif; ?></h3>
                 <p><strong>Author:</strong> <?= htmlspecialchars($book['author_name'] ?? 'Unknown'); ?></p>
-                <p><strong>Publisher:</strong> <?= htmlspecialchars($book['publisher'] ?? 'N/A'); ?></p>
+                <!-- <p><strong>Publisher:</strong> <?= htmlspecialchars($book['publisher'] ?? 'N/A'); ?></p> -->
                 <p><strong>Category:</strong> <?= htmlspecialchars($book['category_name'] ?? 'Uncategorized'); ?></p>
-                <p><strong>Language:</strong> <?= htmlspecialchars($book['language']); ?></p>
-                <p><strong>Available Copies:</strong> <?= htmlspecialchars($book['available_copies']); ?> / <?= htmlspecialchars($book['total_copies']); ?></p>
-                <p><strong>Condition:</strong> <?= htmlspecialchars($book['book_condition']); ?></p>
+                <!-- <p><strong>Language:</strong> <?= htmlspecialchars($book['language']); ?></p> -->
+                <!-- <p><strong>Available Copies:</strong> <?= htmlspecialchars($book['available_copies']); ?> / <?= htmlspecialchars($book['total_copies']); ?></p> -->
+                <!-- <p><strong>Condition:</strong> <?= htmlspecialchars($book['book_condition']); ?></p> -->
                 <?php if (!empty($book['description'])): ?>
-                  <p class="book-desc"><?= htmlspecialchars(mb_strimwidth($book['description'], 0, 250, '...')); ?></p>
+                  <!-- <p class="book-desc"><?= htmlspecialchars(mb_strimwidth($book['description'], 0, 250, '...')); ?></p> -->
                 <?php endif; ?>
                         <div class="book-actions">
                           <?php if (!empty($book['preview_link'])): ?>
