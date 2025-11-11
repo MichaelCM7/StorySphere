@@ -31,7 +31,7 @@ class Template {
             font-size: 24px;
             font-weight: bold;
         }
-        
+
         .navbar-logo-subtitle {
             color: white;
             font-size: 13px;
@@ -73,7 +73,7 @@ class Template {
                 <i class="fa-solid fa-book"></i>
                 <?= htmlspecialchars($config['Website_Name'] ?? 'StorySphere') ?>
             </div>
-            <div class="navbar-logo-subtitle">Library Management</div>
+            <div class="navbar-logo-subtitle">Admin Management</div>
         </div>
 
         <ul class="navbar-links">
