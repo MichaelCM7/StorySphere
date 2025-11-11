@@ -56,10 +56,10 @@ if ($target_uid !== null && isset($connection) && $connection instanceof mysqli)
       <?php include '../Components/user_header.php'; ?>
 
       <div class="stats">
-  <div class="card"><h2><?= $stats['borrowed_books'] ?></h2><p>Borrowed Books</p></div>
-  <div class="card"><h2><?= $stats['pending_returns'] ?></h2><p>Pending Returns</p></div>
-  <div class="card"><h2>$<?= $stats['fines'] ?></h2><p>Outstanding Fines</p></div>
-  <div class="card"><h2><?= $stats['books_read'] ?></h2><p>Books Read</p></div>
+        <div class="card"><h2><?= $stats['borrowed_books'] ?></h2><p>Borrowed Books</p></div>
+        <div class="card"><h2><?= $stats['pending_returns'] ?></h2><p>Pending Returns</p></div>
+        <div class="card"><h2>$<?= $stats['fines'] ?></h2><p>Outstanding Fines</p></div>
+        <div class="card"><h2><?= $stats['books_read'] ?></h2><p>Books Read</p></div>
       </div>
 
       <section class="activity">
