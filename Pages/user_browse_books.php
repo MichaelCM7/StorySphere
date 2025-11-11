@@ -168,6 +168,51 @@ if (empty($availableBooks) && $q !== '') {
   <meta charset="UTF-8">
   <title>Browse Books | StorySphere</title>
   <link rel="stylesheet" href="../user_style.css?v=<?= filemtime(__DIR__.'/../user_style.css') ?>">
+  <style>
+    /* Page-scoped styles: Blue buttons for Preview / View Details */
+    .book-actions a.details-link,
+    .book-actions a.preview-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      line-height: 1.1;
+      border-radius: 8px;
+      background: #2563eb;
+      color: #ffffff;
+      border: 1px solid #1d4ed8;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(37,99,235,0.35);
+      transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
+    }
+    .book-actions a.details-link:hover,
+    .book-actions a.preview-link:hover {
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(29,78,216,0.4);
+    }
+    .book-actions a.details-link:active,
+    .book-actions a.preview-link:active { transform: translateY(1px); }
+    .book-actions a.details-link:focus-visible,
+    .book-actions a.preview-link:focus-visible {
+      outline: 3px solid rgba(147,197,253,0.85);
+      outline-offset: 2px;
+    }
+    .book-actions span.details-link[aria-disabled="true"] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      background: #94a3b8;
+      color: #ffffff;
+      font-weight: 500;
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -192,7 +237,7 @@ if (empty($availableBooks) && $q !== '') {
           <?php foreach($availableBooks as $book): ?>
             <div class="book-card" style="display: flex; flex-direction: column;">
               <?php if (!empty($book['cover_image_url']) || !empty($book['thumbnail'])): ?>
-                <div class="book-thumb" style="display: flex; justify-content: centre">
+                <div class="book-thumb" style="display: flex; justify-content: center">
                   <img style="width: 100%;" src="<?= htmlspecialchars(!empty($book['cover_image_url']) ? $book['cover_image_url'] : ($book['thumbnail'] ?? '')) ?>" alt="<?= htmlspecialchars($book['title']) ?> cover" />
                 </div>
               <?php endif; ?>
@@ -207,23 +252,23 @@ if (empty($availableBooks) && $q !== '') {
                 <?php if (!empty($book['description'])): ?>
                   <!-- <p class="book-desc"><?= htmlspecialchars(mb_strimwidth($book['description'], 0, 250, '...')); ?></p> -->
                 <?php endif; ?>
-                        <div class="book-actions">
+                        <div class="book-actions" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
                           <?php if (!empty($book['preview_link'])): ?>
-                            <a href="<?= htmlspecialchars($book['preview_link']) ?>" target="_blank" rel="noopener">Preview</a>
+                            <a class="preview-link" href="<?= htmlspecialchars($book['preview_link']) ?>" target="_blank" rel="noopener" title="Open preview in a new tab">Preview</a>
                           <?php endif; ?>
                           <?php if (($book['source'] ?? 'local') === 'google'): ?>
                             <?php $gid = $book['google_id'] ?? ''; ?>
                             <?php if (!empty($gid)): ?>
-                              <a class="details-link" href="book.php?gid=<?= urlencode($gid) ?>">View Details</a>
+                              <a class="details-link" href="book.php?gid=<?= urlencode($gid) ?>" title="View full details">View Details</a>
                             <?php elseif (!empty($book['info_link'])): ?>
-                              <a class="details-link" href="<?= htmlspecialchars($book['info_link']) ?>" target="_blank" rel="noopener">View Details</a>
+                              <a class="details-link" href="<?= htmlspecialchars($book['info_link']) ?>" target="_blank" rel="noopener" title="View external details">View Details</a>
                             <?php else: ?>
                               <span class="details-link" aria-disabled="true" title="Details unavailable">View Details</span>
                             <?php endif; ?>
                           <?php else: ?>
                             <?php $bid = isset($book['book_id']) ? (int)$book['book_id'] : 0; ?>
                             <?php if ($bid > 0): ?>
-                              <a class="details-link" href="book.php?id=<?= $bid ?>">View Details</a>
+                              <a class="details-link" href="book.php?id=<?= $bid ?>" title="View full details">View Details</a>
                             <?php else: ?>
                               <span class="details-link" aria-disabled="true" title="Details unavailable">View Details</span>
                             <?php endif; ?>
