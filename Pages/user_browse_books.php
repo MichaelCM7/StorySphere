@@ -58,6 +58,7 @@ if (!function_exists('getAvailableBooks')) {
       SELECT 
         b.book_id,
         b.title,
+        b.cover_image_url,
         b.publisher,
         b.published_date,
         b.language,
@@ -188,9 +189,9 @@ if (empty($availableBooks) && $q !== '') {
         <div class="book-grid">
           <?php foreach($availableBooks as $book): ?>
             <div class="book-card">
-              <?php if (!empty($book['thumbnail'])): ?>
+              <?php if (!empty($book['cover_image_url']) || !empty($book['thumbnail'])): ?>
                 <div class="book-thumb">
-                  <img src="<?= htmlspecialchars($book['thumbnail']) ?>" alt="<?= htmlspecialchars($book['title']) ?> cover" />
+                  <img src="<?= htmlspecialchars(!empty($book['cover_image_url']) ? $book['cover_image_url'] : ($book['thumbnail'] ?? '')) ?>" alt="<?= htmlspecialchars($book['title']) ?> cover" />
                 </div>
               <?php endif; ?>
               <div class="book-meta">
@@ -207,18 +208,6 @@ if (empty($availableBooks) && $q !== '') {
                         <div class="book-actions">
                           <?php if (!empty($book['preview_link'])): ?>
                             <a href="<?= htmlspecialchars($book['preview_link']) ?>" target="_blank" rel="noopener">Preview</a>
-                          <?php endif; ?>
-                          <?php
-                            // Show import button for Google-sourced entries when user is admin or librarian
-                            $canImport = false;
-                            if (session_status() === PHP_SESSION_NONE) session_start();
-                            $role_id = $_SESSION['role_id'] ?? null;
-                            if (in_array($role_id, [1,2], true) && ($book['source'] ?? '') === 'google') {
-                              $canImport = true;
-                            }
-                          ?>
-                          <?php if ($canImport): ?>
-                            <button class="import-btn" data-book='<?= json_encode(array_intersect_key($book, array_flip(["title","author_name","isbn","google_id","publisher","published_date","page_count","description","thumbnail","category_name","language"]))) ?>'>Import</button>
                           <?php endif; ?>
                           <button>View Details</button>
                         </div>
@@ -317,47 +306,6 @@ if (empty($availableBooks) && $q !== '') {
       });
   })();
 
-  // Import handler for Google-sourced items
-  (function(){
-    document.addEventListener('click', async function(e){
-      const btn = e.target.closest('.import-btn');
-      if (!btn) return;
-      e.preventDefault();
-      let payload;
-      try {
-        payload = JSON.parse(btn.getAttribute('data-book'));
-      } catch(err){
-        alert('Invalid import data');
-        return;
-      }
-      if (!payload || !payload.title) {
-        alert('Missing title');
-        return;
-      }
-      btn.disabled = true;
-      const originalText = btn.textContent;
-      btn.textContent = 'Importing...';
-      try {
-        const resp = await fetch('../Pages/import_google_book.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const json = await resp.json();
-        if (json.success) {
-          alert('Imported: book_id=' + json.book_id);
-          btn.remove();
-        } else {
-          alert('Import failed: ' + (json.message || 'unknown'));
-          btn.disabled = false;
-          btn.textContent = originalText;
-        }
-      } catch(err){
-        alert('Import error: ' + err.message);
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-    });
-  })();
+  // Import button removed by design; no client-side handler needed.
 </script>
 </html>

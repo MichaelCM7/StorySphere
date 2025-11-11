@@ -16,17 +16,18 @@ $template->hero('Manage Books');
  * DATABASE CONNECTION AND DATA RETRIEVAL (PHP)
  * ========================================== */
 $table_rows_html = '';
-$COLSPAN_COUNT = 6; // ID, Title, Author, Category, ISBN, Actions
+$COLSPAN_COUNT = 7; // ID, Title, Author, Category, ISBN, Cover, Actions
 
 if (!isset($connection) || $connection->connect_error) {
     $table_rows_html = '<tr><td colspan="' . $COLSPAN_COUNT . '" style="text-align: center; color: red;">Database connection failed.</td></tr>';
 } else {
-    $sql = "SELECT 
+  $sql = "SELECT 
                 b.book_id, 
                 b.title, 
                 a.author_name AS author, 
                 c.category_name AS category, 
                 b.isbn,
+        b.cover_image_url,
                 b.is_deleted
             FROM books b
             LEFT JOIN authors a ON b.author_id = a.author_id
@@ -56,12 +57,21 @@ if (!isset($connection) || $connection->connect_error) {
                         </button>
                         ' . $deleteButton;
 
-            $table_rows_html .= '<tr>
+      $coverHtml = '';
+      if (!empty($row['cover_image_url'])) {
+        $coverSrc = htmlspecialchars($row['cover_image_url']);
+        $coverHtml = '<img class="cover-thumb" src="' . $coverSrc . '" alt="Cover"/>';
+      } else {
+        $coverHtml = '<span style="color:#999;">N/A</span>';
+      }
+
+      $table_rows_html .= '<tr>
                                     <td>' . $bookId . '</td>
                                     <td>' . htmlspecialchars($row['title']) . '</td>
                                     <td>' . htmlspecialchars($row['author'] ?: 'N/A') . '</td>
                                     <td>' . htmlspecialchars($row['category'] ?: 'N/A') . '</td>
                                     <td>' . htmlspecialchars($row['isbn']) . '</td>
+                  <td>' . $coverHtml . '</td>
                                     <td>' . $actions . '</td>
                                  </tr>';
         }
@@ -109,6 +119,7 @@ if (!isset($connection) || $connection->connect_error) {
         #all-books-table tbody td { padding: 12px; border-bottom: 1px solid #e5e7eb; }
         #all-books-table tbody tr:nth-child(even) { background-color: #f9fafb; }
         #all-books-table tbody tr:hover { background-color: #eff6ff; }
+    .cover-thumb { width: 48px; height: 72px; object-fit: cover; border: 1px solid #e5e7eb; border-radius: 4px; }
         @media screen and (max-width: 768px) { .card { padding: 15px; } .table-responsive { overflow-x: auto; } }
     </style>
 </head>
@@ -192,6 +203,7 @@ if (!isset($connection) || $connection->connect_error) {
                 <th>Author</th>
                 <th>Category</th>
                 <th>ISBN</th>
+                <th>Cover</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -300,7 +312,7 @@ function toggleBookDelete(bookId, newStatus, button){
     });
 };
 
-$(document).ready(function() { $('#all-books-table').DataTable({"columnDefs":[{"orderable":false,"targets":5}]}); });
+$(document).ready(function() { $('#all-books-table').DataTable({"columnDefs":[{"orderable":false,"targets":6}]}); });
 </script>
 
 <?php $template->footer($config); ?>

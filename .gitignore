@@ -3,3 +3,17 @@
 # /database/
 /Pages/test.php
 /StorySphere/
+
+# Google Books API cache (do not commit generated cache files)
+/cache/google_books/
+
+# Local logs
+/logs/
+*.log
+
+# One-off dev/diagnostic scripts (safe to ignore/remove before commit)
+/test_*.php
+/*_integration.php
+/diagnose_*.php
+/google_books_test.php
+/check_database.php

@@ -284,7 +284,7 @@ if ($action === 'create' || $action === 'edit') {
 
 // List view
 if ($action === 'list') {
-    $sql = "SELECT b.book_id, b.isbn, b.title, COALESCE(a.author_name,'') AS author, COALESCE(c.category_name,'') AS category, b.total_copies, b.available_copies
+    $sql = "SELECT b.book_id, b.isbn, b.title, b.cover_image_url, COALESCE(a.author_name,'') AS author, COALESCE(c.category_name,'') AS category, b.total_copies, b.available_copies
             FROM books b
             LEFT JOIN authors a ON a.author_id = b.author_id
             LEFT JOIN categories c ON c.category_id = b.category_id
@@ -305,6 +305,7 @@ if ($action === 'list') {
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th>Cover</th>
                     <th>ISBN</th>
                     <th>Title</th>
                     <th>Author</th>
@@ -316,6 +317,13 @@ if ($action === 'list') {
             <tbody>
                 <?php foreach ($data as $book): ?>
                     <tr>
+                        <td>
+                            <?php if (!empty($book['cover_image_url'])): ?>
+                                <img src="<?= htmlspecialchars($book['cover_image_url']) ?>" alt="Cover" width="48" height="72" style="object-fit:cover;border:1px solid #ddd;border-radius:4px"/>
+                            <?php else: ?>
+                                <span style="color:#999;">N/A</span>
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($book['isbn']) ?></td>
                         <td><?= htmlspecialchars($book['title']) ?></td>
                         <td><?= htmlspecialchars($book['author']) ?></td>
