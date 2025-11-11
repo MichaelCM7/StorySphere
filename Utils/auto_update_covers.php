@@ -18,14 +18,14 @@ chdir(__DIR__ . '/../Config');
 require_once __DIR__ . '/../Config/dbconnection.php';
 require_once __DIR__ . '/../Utils/GoogleBooks.php';
 
-// Get books without covers
+// Get books missing description OR cover (prioritize missing description)
 $stmt = $connection->prepare("
-    SELECT book_id, title, isbn, publisher, description, page_count
+    SELECT book_id, title, isbn, publisher, description, page_count, cover_image_url
     FROM books 
-    WHERE (cover_image_url IS NULL OR cover_image_url = '') 
+    WHERE (description IS NULL OR description = '' OR cover_image_url IS NULL OR cover_image_url = '')
     AND title IS NOT NULL 
-    ORDER BY book_id ASC 
-    LIMIT 10
+    ORDER BY (description IS NULL OR description = '') DESC, book_id ASC 
+    LIMIT 15
 ");
 $stmt->execute();
 $result = $stmt->get_result();
@@ -37,14 +37,16 @@ while ($book = $result->fetch_assoc()) {
     $title = $book['title'];
     $isbn = $book['isbn'];
     
+    $currentCover = $book['cover_image_url'] ?? '';
     $coverUrl = null;
     $publisher = $book['publisher'] ?? '';
     $description = $book['description'] ?? '';
     $pageCount = (int)($book['page_count'] ?? 0);
     $metaNeedsUpdate = ($publisher === '' || $description === '' || $pageCount === 0);
+    $needsCover = ($currentCover === '' || $currentCover === null);
     
-    // Try ISBN first
-    if (!empty($isbn)) {
+    // Try ISBN first only if needed (cover or missing metadata)
+    if (!empty($isbn) && ($needsCover || $metaNeedsUpdate)) {
         try {
             $bookData = GoogleBooksClient::getByIsbn($isbn);
             if ($bookData) {
@@ -62,8 +64,8 @@ while ($book = $result->fetch_assoc()) {
         }
     }
     
-    // Try title if ISBN didn't work
-    if (!$coverUrl && !empty($title)) {
+    // Try title if we still need a cover or metadata
+    if ((!$coverUrl || $metaNeedsUpdate) && !empty($title)) {
         try {
             $results = GoogleBooksClient::search($title, null, 1);
             if (!empty($results[0])) {

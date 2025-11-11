@@ -59,6 +59,8 @@ if (!function_exists('getAvailableBooks')) {
         b.book_id,
         b.title,
         b.cover_image_url,
+        b.description,
+        b.page_count,
         b.publisher,
         b.published_date,
         b.language,
@@ -209,7 +211,23 @@ if (empty($availableBooks) && $q !== '') {
                           <?php if (!empty($book['preview_link'])): ?>
                             <a href="<?= htmlspecialchars($book['preview_link']) ?>" target="_blank" rel="noopener">Preview</a>
                           <?php endif; ?>
-                          <button>View Details</button>
+                          <?php if (($book['source'] ?? 'local') === 'google'): ?>
+                            <?php $gid = $book['google_id'] ?? ''; ?>
+                            <?php if (!empty($gid)): ?>
+                              <a class="details-link" href="book.php?gid=<?= urlencode($gid) ?>">View Details</a>
+                            <?php elseif (!empty($book['info_link'])): ?>
+                              <a class="details-link" href="<?= htmlspecialchars($book['info_link']) ?>" target="_blank" rel="noopener">View Details</a>
+                            <?php else: ?>
+                              <span class="details-link" aria-disabled="true" title="Details unavailable">View Details</span>
+                            <?php endif; ?>
+                          <?php else: ?>
+                            <?php $bid = isset($book['book_id']) ? (int)$book['book_id'] : 0; ?>
+                            <?php if ($bid > 0): ?>
+                              <a class="details-link" href="book.php?id=<?= $bid ?>">View Details</a>
+                            <?php else: ?>
+                              <span class="details-link" aria-disabled="true" title="Details unavailable">View Details</span>
+                            <?php endif; ?>
+                          <?php endif; ?>
                         </div>
               </div>
             </div>
@@ -225,87 +243,90 @@ if (empty($availableBooks) && $q !== '') {
     const input = document.querySelector('input[name="q"]');
     if (!input) return;
     let t;
-      // Shared search function used by both live input (debounced) and Enter key
-      let currentController = null;
-      const MIN_SEARCH_CHARS = 2;
+    // Shared search function used by both live input (debounced) and Enter key
+    let currentController = null;
+    const MIN_SEARCH_CHARS = 2;
 
-      async function performSearchForValue(val) {
-        const url = new URL(window.location.href);
-        const resultsContainer = document.querySelector('#resultsArea');
-        if (!resultsContainer) return;
+    async function performSearchForValue(val) {
+      const url = new URL(window.location.href);
+      const resultsContainer = document.querySelector('#resultsArea');
+      if (!resultsContainer) return;
 
-        // If query is short, show a hint and skip network fetch
-        if (val.length > 0 && val.length < MIN_SEARCH_CHARS) {
-          resultsContainer.innerHTML = '<p class="search-hint">Type ' + MIN_SEARCH_CHARS + '+ characters to search</p>';
-          history.replaceState({}, '', url.toString());
-          return;
-        }
-
-        // Abort previous request if any
-        if (currentController) {
-          try { currentController.abort(); } catch(_) {}
-        }
-        currentController = new AbortController();
-        const signal = currentController.signal;
-
-        // Show loading state
-        resultsContainer.innerHTML = '<p class="loading">Searching...</p>';
-
-        if (val) {
-          url.searchParams.set('q', val);
-        } else {
-          url.searchParams.delete('q');
-        }
-        if (val) {
-          url.searchParams.set('q', val);
-        } else {
-          url.searchParams.delete('q');
-        }
-        try {
-          const res = await fetch(url.toString(), { cache: 'no-store', signal });
-          if (!res.ok) {
-            window.location.assign(url.toString());
-            return;
-          }
-          const text = await res.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(text, 'text/html');
-          const newResults = doc.querySelector('#resultsArea');
-          const cur = document.querySelector('#resultsArea');
-          if (newResults && cur) {
-            cur.innerHTML = newResults.innerHTML;
-            history.replaceState({}, '', url.toString());
-          } else {
-            window.location.assign(url.toString());
-          }
-        } catch (err) {
-          if (err.name === 'AbortError') {
-            // expected when a newer request starts; do nothing
-          } else {
-            window.location.assign(url.toString());
-          }
-        }
+      // If query is short, show a hint and skip network fetch
+      if (val.length > 0 && val.length < MIN_SEARCH_CHARS) {
+        resultsContainer.innerHTML = '<p class="search-hint">Type ' + MIN_SEARCH_CHARS + '+ characters to search</p>';
+        history.replaceState({}, '', url.toString());
+        return;
       }
 
-      input.addEventListener('input', function() {
-        clearTimeout(t);
-        t = setTimeout(() => {
-          const val = input.value.trim();
-          performSearchForValue(val);
-        }, 300);
-      });
+      // Abort previous request if any
+      if (currentController) {
+        try { currentController.abort(); } catch(_) {}
+      }
+      currentController = new AbortController();
+      const signal = currentController.signal;
 
-      // Also trigger search immediately on Enter key (keypress/keydown handler)
-      input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          clearTimeout(t);
-          const val = input.value.trim();
-          performSearchForValue(val);
+      // Show loading state
+      resultsContainer.innerHTML = '<p class="loading">Searching...</p>';
+
+      if (val) {
+        url.searchParams.set('q', val);
+      } else {
+        url.searchParams.delete('q');
+      }
+      try {
+        const res = await fetch(url.toString(), { cache: 'no-store', signal });
+        if (!res.ok) {
+          window.location.assign(url.toString());
+          return;
         }
-      });
+        const text = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const newResults = doc.querySelector('#resultsArea');
+        const cur = document.querySelector('#resultsArea');
+        if (newResults && cur) {
+          cur.innerHTML = newResults.innerHTML;
+          history.replaceState({}, '', url.toString());
+        } else {
+          window.location.assign(url.toString());
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          // expected when a newer request starts; do nothing
+        } else {
+          window.location.assign(url.toString());
+        }
+      }
+    }
+
+    input.addEventListener('input', function() {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const val = input.value.trim();
+        performSearchForValue(val);
+      }, 300);
+    });
+
+    // Also trigger search immediately on Enter key (keypress/keydown handler)
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        clearTimeout(t);
+        const val = input.value.trim();
+        performSearchForValue(val);
+      }
+    });
   })();
 
-  // Import button removed by design; no client-side handler needed.
+  // Defensive: ensure details-link anchors navigate
+  (function(){
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('a.details-link');
+      if (!a) return;
+      if (a.getAttribute('aria-disabled') === 'true') { e.preventDefault(); return; }
+      // No special handling; allow default navigation
+    });
+  })();
 </script>
 </html>

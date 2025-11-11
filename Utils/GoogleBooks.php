@@ -121,6 +121,37 @@ class GoogleBooksClient {
         return $items[0] ?? null;
     }
 
+    public static function getByGoogleId(string $googleId, ?string $apiKey = null, int $cacheTtl = 86400): ?array {
+        $googleId = trim($googleId);
+        if ($googleId === '') return null;
+        $key = 'gid_' . $googleId . ($apiKey ? '_key' : '');
+        $cached = static::cacheGet($key);
+        if ($cached !== null) return $cached;
+
+        $url = 'https://www.googleapis.com/books/v1/volumes/' . rawurlencode($googleId);
+        if ($apiKey) {
+            $url .= '?' . http_build_query(['key' => $apiKey]);
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'StorySphere/1.0 (+https://example.local)');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $resp = curl_exec($ch);
+        curl_close($ch);
+
+        if ($resp === false) return null;
+        $json = json_decode($resp, true);
+        if (!is_array($json)) return null;
+        $mapped = static::mapVolume($json);
+        if (!$mapped) return null;
+        static::cacheSet($key, $mapped, $cacheTtl);
+        return $mapped;
+    }
+
     protected static function mapVolume(array $volume): ?array {
         if (empty($volume['volumeInfo'])) return null;
         $v = $volume['volumeInfo'];
