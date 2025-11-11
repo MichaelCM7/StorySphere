@@ -365,7 +365,7 @@ HTML;
             <section class="get-started">
                 <h2>Get Started</h2>
                 <p>Create an account to start your journey with Story Sphere. Enjoy exclusive content and features tailored just for you.</p>
-                <a href="Signup.php" class="btn">Sign Up Now</a>
+                <a href="signUp.php" class="btn">Sign Up Now</a>
             </section>
 HTML;
     }
