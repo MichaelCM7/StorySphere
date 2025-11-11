@@ -1,5 +1,7 @@
+
 <?php
 // Minimal public navbar for landing/index page
+//require_once __DIR__ . '/../Components/auth_guard.php';
 ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <div class="navbar">
