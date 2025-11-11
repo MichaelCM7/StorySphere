@@ -76,7 +76,32 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
     .meta-pane { flex:1 1 300px; }
     .meta-pane p { margin:4px 0; }
     .description { margin-top:14px; background:#fafafa; border:1px solid #eee; padding:12px; border-radius:6px; white-space:pre-line; }
-    .back-link { margin-top:16px; display:inline-block; }
+    /* Styled Back button */
+    .back-link {
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      background: #2563eb; /* primary blue */
+      color: #ffffff;
+      border: 1px solid #1d4ed8;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(37,99,235,0.25);
+      transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease;
+    }
+    .back-link:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 4px 14px rgba(29,78,216,0.35);
+    }
+    .back-link:active { transform: translateY(1px); }
+    .back-link:focus-visible {
+      outline: 3px solid rgba(147,197,253,0.8);
+      outline-offset: 2px;
+    }
   </style>
   
 </head>
