@@ -72,10 +72,18 @@ $stmt_book = $connection->prepare("INSERT INTO books (title, author_id, category
 $stmt_book->bind_param("siis", $title, $author_id, $category_id, $isbn);
 
 if ($stmt_book->execute()) {
+    $bookId = $stmt_book->insert_id;
+    
+    // Auto-fetch cover in background (non-blocking)
+    $coverScript = __DIR__ . '/../Utils/auto_update_covers.php';
+    if (file_exists($coverScript)) {
+        @exec('php "' . $coverScript . '" --silent > nul 2>&1');
+    }
+    
     echo json_encode([
         'success' => true,
         'message' => '✅ Book added successfully',
-        'book_id' => $stmt_book->insert_id,
+        'book_id' => $bookId,
         'debug' => compact('title', 'author_id', 'category_id', 'isbn')
     ]);
 } else {

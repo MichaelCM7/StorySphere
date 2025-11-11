@@ -368,3 +368,54 @@ button:active {
   transform: none !important;
   box-shadow: none !important;
 }
+
+/* Google Books thumbnails and layout tweaks */
+.book-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.book-thumb img {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(2,6,23,0.06);
+}
+.book-meta {
+  text-align: left;
+  flex: 1;
+}
+.external-badge {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 6px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+.book-desc {
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+.book-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.import-btn {
+  background: #10b981;
+}
+.import-btn:hover { background: #059669; }
+
+.loading {
+  color: #6b7280;
+  font-style: italic;
+}
+.search-hint {
+  color: #9ca3af;
+  font-style: italic;
+}
