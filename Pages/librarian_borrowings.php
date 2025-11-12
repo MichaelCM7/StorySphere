@@ -16,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'add_borrowing') {
         $issueDate = trim($_POST['issue_date'] ?? '');
 
+        // Collect and sanitize submitted IDs to avoid undefined variable notices
+        $userId = isset($_POST['user_id']) ? (int)$_POST['user_id'] : 0;
+        $bookId = isset($_POST['book_id']) ? (int)$_POST['book_id'] : 0;
+
         if ($userId > 0 && $bookId > 0 && $issueDate !== '') {
             try {
                 $dueDate = date('Y-m-d', strtotime($issueDate . ' + 14 days'));
